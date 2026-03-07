@@ -53,6 +53,13 @@ Return exactly these sections in order:
 - Prefer clear labels over excessive detail.
 - Ensure Mermaid syntax is valid and directly renderable.
 - Do not include placeholder entities that do not exist in this repo.
+- Output Mermaid that is paste-safe for Mermaid Live Editor.
+- In flowchart node labels, use `<br/>` for line breaks; do not use escaped newlines like `\n`.
+- Avoid Markdown formatting inside Mermaid labels (for example `**bold**`).
+- Do not use the `|` character inside node/class labels; reserve it for edge conditions only.
+- Prefer plain ASCII text in labels; replace punctuation-heavy tokens with safe forms (for example `Nice_to_have`, `GPT_5_3_Codex`).
+- In `classDiagram` class bodies, use simple `name value` pairs and avoid complex punctuation.
+- Before finalizing, perform a syntax sanity check to ensure both diagrams parse in Mermaid Live Editor without manual edits.
 
 ## Notes
 
