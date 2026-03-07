@@ -16,16 +16,17 @@ This workspace defines three custom agents in `.github/agents`:
    - `Review the task list feature for bugs and maintainability.`
    - `Implement feature X and iterate until review is clean.`
 
-The Orchestrator is configured with the `agent` tool and restricted to these subagents:
+The Orchestrator is configured as a coordinator (no direct file edits) and restricted to these subagents:
 
 - `Developer`
 - `Reviewer`
 
 Workflow behavior:
 
-- Orchestrator runs `Developer` first.
-- Then it runs `Reviewer`.
-- If `Reviewer` reports `Critical` or `Important` findings, Orchestrator sends fixes back to `Developer`.
+- For implementation prompts, Orchestrator runs `Developer` first, then `Reviewer`.
+- For review-only prompts, Orchestrator skips `Developer` and runs `Reviewer` directly.
+- If `Reviewer` reports `Critical` or `Important` findings and implementation changes are in scope, Orchestrator sends fixes back to `Developer`.
 - This loop repeats until no blocking findings remain, or max iterations is reached.
+- If max iterations is reached, Orchestrator keeps the best known working implementation and reports remaining risks.
 
 Both workers are `user-invocable: false`, so they are intended to run through the Orchestrator.
