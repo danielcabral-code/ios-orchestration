@@ -4,6 +4,7 @@ This workspace defines three custom agents in `.github/agents`:
 
 - `orchestrator.agent.md` (main coordinator)
 - `ideator.agent.md` (ideation subagent)
+- `functional-analyst.agent.md` (functional requirements subagent)
 - `developer.agent.md` (implementation subagent)
 - `reviewer.agent.md` (review subagent)
 
@@ -20,17 +21,18 @@ This workspace defines three custom agents in `.github/agents`:
 The Orchestrator is configured as a coordinator (no direct file edits) and restricted to these subagents:
 
 - `Ideator`
+- `Functional Analyst`
 - `Developer`
 - `Reviewer`
 
 Workflow behavior:
 
-- For new app from-scratch prompts, Orchestrator runs `Ideator` first, then passes the App Brief to `Developer`, then `Reviewer`.
+- For new app from-scratch prompts, Orchestrator runs `Ideator`, then `Functional Analyst`, then `Developer`, then `Reviewer`.
 - For implementation prompts on existing code, Orchestrator skips `Ideator` and runs `Developer` then `Reviewer`.
 - For review-only prompts, Orchestrator skips both `Ideator` and `Developer` and runs `Reviewer` directly.
 - If `Reviewer` reports `Critical` or `Important` findings and implementation changes are in scope, Orchestrator sends fixes back to `Developer`.
 - This loop repeats until no blocking findings remain, or max iterations is reached.
 - If max iterations is reached, Orchestrator keeps the best known working implementation and reports remaining risks.
-- Spec agents (functional and technical) will be inserted between `Ideator` and `Developer` when added.
+- A technical spec agent will be inserted between `Functional Analyst` and `Developer` when added.
 
 Both workers are `user-invocable: false`, so they are intended to run through the Orchestrator.
