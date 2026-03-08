@@ -41,6 +41,7 @@ When assigned a development task:
    - For each screen listed in the Stitch Project Reference, call `mcp_stitch_get_screen` to fetch the mockup and use it as the visual source of truth for layout, component placement, and UI states.
    - If a screen has variants listed, fetch those too and implement each distinct UI state they represent.
    - If a Generated Assets section is present, use those file paths directly when implementing views that display images (app icon references, empty state illustrations, onboarding visuals, in-app content images). Do not substitute placeholder assets or regenerate — use the exact paths provided.
+   - If any screen in the Design Spec notes a `SceneView` or `RealityView` with a `.usdz` model, implement it using the framework and camera angle specified. Refer to the iOS Development Skill for implementation rules.
 3. Identify the smallest correct change.
 4. Implement code with minimal scope and clear iOS-native structure.
 5. Keep style and architecture consistent with the Architecture Blueprint and existing project patterns.

@@ -42,6 +42,23 @@ Generate assets for:
 
 After initial generation, use `mcp_nano-banana_continue_editing` to refine the last generated image if the output does not match the intended style. Use `mcp_nano-banana_edit_image` to modify a specific previously saved asset.
 
+### 3D Assets
+
+Use 3D-style assets selectively — one per screen at most, and only where they meaningfully add depth or a premium feel. Do not apply them to functional UI elements.
+
+Before generating, check whether an iOS native option is sufficient:
+- **SF Symbols with hierarchical or multicolor rendering** — use these first for any decorative icon that could benefit from depth. No generation needed, just note the rendering mode in the Design Spec and in the Stitch screen prompt.
+- **SceneKit / RealityKit interactive 3D** — if the FRD calls for a rotatable or interactive 3D object, do not generate an image for it. Instead, note in the Design Spec under the relevant screen that the Developer should implement a `SceneView` or `RealityView` with a `.usdz` model, and describe the expected object and camera angle.
+
+Generate a 3D asset with nano-banana when a custom soft-3D illustration adds value that SF Symbols cannot provide — for example: app icon, onboarding hero, empty state focal object, or feature highlight. Use the following prompt style:
+- Describe the subject as a `soft 3D clay render` or `clay render`
+- Specify `matte finish`, `subtle ambient shadow`, `no background` or `floating on white`
+- Use `single object, centered` composition
+- Apply 1-2 colors from the app's visual language; avoid saturated plastic-looking finishes
+- Keep it consistent with the minimal/modern style constraint above
+
+Appropriate styles for 3D assets: Warm, Soft, Bold, Dark. Skip for System, Minimal, and Professional styles.
+
 Save all generated assets to a well-structured path and record each path in the Design Spec under a **Generated Assets** section so the Developer can reference them directly.
 
 You operate in two modes. Determine which applies before proceeding:

@@ -75,6 +75,26 @@ Provide a consistent, production-minded workflow for building iOS apps that run 
 - Keep navigation and interactions predictable.
 - Design for offline-first behavior since app is device-local.
 
+## 3D Content
+
+Use SceneKit or RealityKit only when the Design Spec explicitly calls for an interactive or displayed 3D object.
+
+| Framework | When to use | SwiftUI integration |
+|---|---|---|
+| SceneKit | Non-AR 3D scenes, rotatable objects, supported on all iOS targets | `SceneView(scene:options:)` |
+| RealityKit | AR scenes or when the Design Spec specifies RealityKit | `RealityView` (iOS 17+) |
+
+Implementation rules:
+- Load `.usdz` assets from the app bundle. Do not fetch remotely.
+- Use `SceneView.Options` `.allowsCameraControl` for user-rotatable objects; omit for static display.
+- For `SceneView`, load the scene with `SCNScene(named:)` and handle the nil case gracefully.
+- For `RealityView`, load entities with `ModelEntity.loadAsync(named:)` and catch load errors.
+- Wrap 3D views in a sized container — they do not self-size reliably in SwiftUI layouts.
+- Test on device; SceneKit/RealityKit performance in Simulator is unreliable.
+- If the `.usdz` file is large, load asynchronously and show a `ProgressView` while loading.
+
+---
+
 ## Testing Focus
 
 - Unit test view models and business logic.

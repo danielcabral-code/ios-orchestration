@@ -227,6 +227,49 @@ Respect `accessibilityReduceMotion` — disable or simplify non-essential animat
 
 ---
 
+## Step 9 — 3D Assets
+
+Use 3D visual assets selectively to add tactile depth and a premium feel. Overuse breaks visual consistency — apply only where it meaningfully enhances the experience.
+
+### When to use 3D assets
+
+- App icon: a soft 3D render makes an icon feel premium and distinctive on the home screen. Appropriate for Warm, Soft, Bold, and Dark styles. Skip for System, Minimal, or Professional styles.
+- Hero / onboarding images: a single 3D-style illustration as a focal point per onboarding step. One asset per step maximum.
+- Empty state focal object: when the empty state calls for a visual object (not just an SF Symbol), a 3D-rendered version of that object adds character. One per screen maximum.
+- In-app feature highlights: if the FRD includes a feature showcase or paywall screen, a 3D object representing the feature is appropriate.
+
+### When NOT to use 3D assets
+
+- Do not use 3D assets in list rows, navigation bars, tab bars, or form controls.
+- Do not use 3D for supporting icons or functional UI elements — SF Symbols only.
+- Do not apply 3D styling to more than one element per screen.
+- System, Minimal, and Professional style apps should not use 3D assets at all.
+
+### iOS native 3D options (no generation needed)
+
+| Option | When to use | Implementation note |
+|---|---|---|
+| SF Symbols multicolor / hierarchical | Decorative icons with depth layers | `.symbolRenderingMode(.hierarchical)` or `.multicolor` |
+| SF Symbols variable color | Icons that communicate quantity or progress | `.symbolVariants` + variable value |
+| SceneKit / RealityKit view | Interactive 3D object the user can rotate or examine | `SceneView` or `RealityView` — note in Design Spec as a Developer concern, specify the expected model file format (`.usdz`) |
+
+Prefer native iOS options when they satisfy the need. Generate with nano-banana only when a custom 3D-style illustration adds value that SF Symbols cannot provide.
+
+### Generating 3D-style assets with nano-banana
+
+Use a soft 3D / clay render prompt style. All aesthetic principles from Image Asset Generation apply (clean, minimal, limited palette) — add these 3D-specific descriptors:
+
+- `soft 3D render` or `clay render` — matte, tactile surface without specular glare
+- `isometric` or `front-facing` depending on composition
+- `subtle ambient occlusion shadow` — grounding shadow only, not dramatic
+- `pastel or muted palette` — avoid saturated plastic-looking colors
+- `no background` or `floating on white` — keeps the asset composable
+- `single object, centered` — one focal element per asset
+
+Example prompt structure: *"Soft 3D clay render of [subject], [color from visual language] palette, matte finish, centered on white background, no text, subtle ambient shadow, minimal modern style"*
+
+---
+
 ## Pre-Delivery Design Checklist
 
 ### Visual
