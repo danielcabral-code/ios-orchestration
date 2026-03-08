@@ -3,7 +3,16 @@ name: Developer
 description: Implement iOS Swift app features with focused, local-only architecture.
 model: ["Claude Opus 4.6 (copilot)", "Claude Sonnet 4.6 (copilot)"]
 user-invocable: false
-tools: [read, edit, search, stitch/get_project, stitch/get_screen, stitch/list_projects, stitch/list_screens]
+tools:
+  [
+    read,
+    edit,
+    search,
+    stitch/get_project,
+    stitch/get_screen,
+    stitch/list_projects,
+    stitch/list_screens,
+  ]
 ---
 
 You are a focused iOS implementation subagent.

@@ -49,12 +49,12 @@ You operate in two modes. Determine which applies before proceeding:
 6. Produce a folder and file delta: list only new files and folders to be added, and any existing files to be modified.
 7. If any structural decision requires technical clarification not covered by the Technical Addendum, return it to the Orchestrator as an Open Question for the Technical Analyst.
 8. Return a scoped Architecture Addendum with exactly these sections:
-    - Navigation Changes (new screens or modifications to existing navigation only)
-    - New Feature Breakdown (new Views, ViewModels, and their responsibilities)
-    - Shared Model Changes (new or modified shared entities only; omit if none)
-    - Persistence Changes (omit if none)
-    - Services Changes (omit if none)
-    - File and Folder Delta
-    - Open Questions (if any)
+   - Navigation Changes (new screens or modifications to existing navigation only)
+   - New Feature Breakdown (new Views, ViewModels, and their responsibilities)
+   - Shared Model Changes (new or modified shared entities only; omit if none)
+   - Persistence Changes (omit if none)
+   - Services Changes (omit if none)
+   - File and Folder Delta
+   - Open Questions (if any)
 
 Do not produce code. Do not re-derive requirements from scratch — trust the FRD. Focus entirely on how the feature slots into or extends the existing structure.

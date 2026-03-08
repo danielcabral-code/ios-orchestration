@@ -50,6 +50,7 @@ For each feature in the App Brief, produce a set of functional requirements usin
 - Specify UI state behavior explicitly (for example: "The app must display an empty state message when no items exist").
 
 Each requirement must be:
+
 - Atomic: one condition per statement.
 - Testable: a developer or tester can verify it pass/fail.
 - Unambiguous: no room for interpretation.

@@ -11,7 +11,7 @@ Design a clear, minimal structural blueprint for an iOS app based on a Functiona
 
 ## Core Principle
 
-Architecture describes *how the app is structured*, not what it does (FRD) or which frameworks to use (Technical Spec). It defines layers, boundaries, and contracts. Good iOS architecture is predictable, testable, and easy to navigate. Avoid over-engineering.
+Architecture describes _how the app is structured_, not what it does (FRD) or which frameworks to use (Technical Spec). It defines layers, boundaries, and contracts. Good iOS architecture is predictable, testable, and easy to navigate. Avoid over-engineering.
 
 ## Architectural Pattern: MVVM
 
@@ -59,6 +59,7 @@ Only create a layer if it is needed. Do not create empty folders or placeholder 
 ## Component Boundaries
 
 For each feature:
+
 - Name the View and ViewModel.
 - State what data the ViewModel holds (derived from the FRD + data model).
 - State what actions/intents the ViewModel exposes to the View.
@@ -67,6 +68,7 @@ For each feature:
 ## Protocol Contracts
 
 Define protocols only where they add testability or decoupling value:
+
 - Persistence access patterns (for example: an `ItemRepository` protocol with a concrete SwiftData implementation).
 - Device service wrappers (for example: a `LocationProvider` protocol wrapping CoreLocation).
 - Do not create protocols for ViewModels unless a concrete requirement for abstraction exists.
@@ -76,6 +78,7 @@ Define protocols only where they add testability or decoupling value:
 Produce an Architecture Blueprint with these sections:
 
 **1. Navigation Structure**
+
 - Top-level container (TabView / NavigationStack).
 - Screen inventory: name, navigation method (push / sheet / tab), and owning feature.
 
@@ -83,17 +86,22 @@ Produce an Architecture Blueprint with these sections:
 For each feature: View name, ViewModel name, ViewModel state properties, ViewModel actions, persistence interactions.
 
 **3. Shared Models**
+
 - Shared entity definitions and their persistence layer.
 
 **4. Persistence Layer**
+
 - Persistence controller or container setup.
 - How features access the persistence layer (direct model context / repository pattern).
 
 **5. Services Layer** (if needed)
+
 - Any shared service classes (for example: NotificationService, LocationService).
 
 **6. Folder Structure**
+
 - Concrete folder and file tree for the full app.
 
 **7. Open Questions** (if any)
+
 - Structural ambiguities requiring Technical Analyst or Functional Analyst clarification before the Developer can begin.

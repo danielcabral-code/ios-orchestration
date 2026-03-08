@@ -16,6 +16,7 @@ A technical specification answers: what iOS technologies are needed, which are t
 ## iOS Framework Awareness
 
 ### Persistence
+
 - **SwiftData**: preferred for new projects on iOS 17+; model-driven, `@Model` macros, native Swift concurrency.
 - **Core Data**: use for existing Core Data projects or complex relational schemas with migration history.
 - **UserDefaults**: lightweight key-value only; settings, flags, last-used values. Never for collections or large data.
@@ -24,11 +25,13 @@ A technical specification answers: what iOS technologies are needed, which are t
 Choose the simplest option that satisfies all persistence requirements. Do not mix SwiftData and Core Data in the same app.
 
 ### UI Framework
+
 - **SwiftUI**: default for all new projects.
 - **UIKit**: only if the existing codebase uses UIKit or a specific requirement cannot be met in SwiftUI.
 - Never mix frameworks without a justified reason.
 
 ### Device APIs (local-only scope)
+
 - **MapKit**: on-device maps and local annotations. No remote geocoding beyond on-device capabilities.
 - **CoreLocation**: device GPS/location. No remote services.
 - **EventKit**: on-device calendar and reminders.
@@ -58,26 +61,32 @@ If a requirement is infeasible, return it to the Functional Analyst with a clear
 Produce a Technical Specification with these sections:
 
 **1. Platform Target**
+
 - Minimum iOS version.
 - Deployment device class (iPhone only / iPad / Universal).
 
 **2. Framework Selection**
+
 - UI framework and justification.
 - Persistence framework and justification.
 - Additional frameworks required (one per requirement that needs one), with reason.
 
 **3. Data Model**
+
 - Concrete entities, fields, and types (informed by the FRD data model).
 - Relationships between entities.
 - Persistence strategy per entity.
 
 **4. Technical Constraints**
+
 - Local-only constraints confirmed.
 - Any requirement-level constraints (for example: max file size, concurrency requirements, background processing).
 
 **5. Risk Register**
+
 - Each identified risk with likelihood and mitigation approach.
 - Flag any requirements that were modified or scoped down for feasibility.
 
 **6. Open Questions** (if any)
+
 - Technical ambiguities that require clarification from the Functional Analyst before the Architect can proceed.
