@@ -247,11 +247,11 @@ Use 3D visual assets selectively to add tactile depth and a premium feel. Overus
 
 ### iOS native 3D options (no generation needed)
 
-| Option | When to use | Implementation note |
-|---|---|---|
-| SF Symbols multicolor / hierarchical | Decorative icons with depth layers | `.symbolRenderingMode(.hierarchical)` or `.multicolor` |
-| SF Symbols variable color | Icons that communicate quantity or progress | `.symbolVariants` + variable value |
-| SceneKit / RealityKit view | Interactive 3D object the user can rotate or examine | `SceneView` or `RealityView` — note in Design Spec as a Developer concern, specify the expected model file format (`.usdz`) |
+| Option                               | When to use                                          | Implementation note                                                                                                         |
+| ------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| SF Symbols multicolor / hierarchical | Decorative icons with depth layers                   | `.symbolRenderingMode(.hierarchical)` or `.multicolor`                                                                      |
+| SF Symbols variable color            | Icons that communicate quantity or progress          | `.symbolVariants` + variable value                                                                                          |
+| SceneKit / RealityKit view           | Interactive 3D object the user can rotate or examine | `SceneView` or `RealityView` — note in Design Spec as a Developer concern, specify the expected model file format (`.usdz`) |
 
 Prefer native iOS options when they satisfy the need. Generate with nano-banana only when a custom 3D-style illustration adds value that SF Symbols cannot provide.
 
@@ -266,7 +266,7 @@ Use a soft 3D / clay render prompt style. All aesthetic principles from Image As
 - `no background` or `floating on white` — keeps the asset composable
 - `single object, centered` — one focal element per asset
 
-Example prompt structure: *"Soft 3D clay render of [subject], [color from visual language] palette, matte finish, centered on white background, no text, subtle ambient shadow, minimal modern style"*
+Example prompt structure: _"Soft 3D clay render of [subject], [color from visual language] palette, matte finish, centered on white background, no text, subtle ambient shadow, minimal modern style"_
 
 ---
 

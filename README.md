@@ -4,16 +4,16 @@ A multi-agent pipeline for building local-only iOS apps with Swift and SwiftUI, 
 
 ## Agents
 
-| Agent | Role |
-|---|---|
-| `Orchestrator` | Main coordinator. Routes requests, manages agent handoffs, runs the review/fix loop. |
-| `Ideator` | Translates a raw prompt into a scoped App Brief. |
-| `Functional Analyst` | Produces a Functional Requirements Document from an App Brief or feature description. |
-| `Technical Analyst` | Evaluates feasibility, selects frameworks, defines the data model. Produces a Technical Specification. |
-| `Architect` | Designs the MVVM structure, navigation graph, and folder layout. Produces an Architecture Blueprint. |
-| `Designer` | Generates image assets (nano-banana) and screen mockups (Google Stitch). Produces a Design Spec. |
-| `Developer` | Implements Swift/SwiftUI code from the full document package. |
-| `Reviewer` | Reviews code quality with prioritized findings. |
+| Agent                | Role                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `Orchestrator`       | Main coordinator. Routes requests, manages agent handoffs, runs the review/fix loop.                   |
+| `Ideator`            | Translates a raw prompt into a scoped App Brief.                                                       |
+| `Functional Analyst` | Produces a Functional Requirements Document from an App Brief or feature description.                  |
+| `Technical Analyst`  | Evaluates feasibility, selects frameworks, defines the data model. Produces a Technical Specification. |
+| `Architect`          | Designs the MVVM structure, navigation graph, and folder layout. Produces an Architecture Blueprint.   |
+| `Designer`           | Generates image assets (nano-banana) and screen mockups (Google Stitch). Produces a Design Spec.       |
+| `Developer`          | Implements Swift/SwiftUI code from the full document package.                                          |
+| `Reviewer`           | Reviews code quality with prioritized findings.                                                        |
 
 All subagents are `user-invocable: false` — use them through the Orchestrator.
 
@@ -49,6 +49,7 @@ Each agent is backed by one or more reference skills in `.github/skills/`:
 ## Review/fix loop
 
 After every implementation path, the Reviewer runs and its findings are checked:
+
 - `Critical` or `Important` findings → sent back to Developer for fixes
 - Loop repeats until no blocking findings remain or a maximum of 3 iterations is reached
 - At the iteration cap, the best known working implementation is kept and remaining risks are reported
@@ -56,6 +57,7 @@ After every implementation path, the Reviewer runs and its findings are checked:
 ## Project constraints
 
 All apps in this workflow are:
+
 - iOS only, Swift, SwiftUI
 - Device-local: no backend, no auth, no remote APIs
 - Persistence via SwiftData, Core Data, UserDefaults, or FileManager
