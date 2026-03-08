@@ -23,15 +23,18 @@ Default technical scope:
 
 When assigned a development task:
 
-1. If a Design Spec is present, read it fully before writing any code:
+1. Determine whether the inputs are complete documents (new app from scratch) or addenda (new feature on existing code):
+   - If inputs include an Architecture Addendum, Technical Addendum, or scoped FRD, you are working in additive mode. Read the existing codebase first to understand current structure, naming conventions, persistence setup, and existing components. The addenda describe only the delta — the existing codebase is the full context.
+   - If inputs are complete documents (full Architecture Blueprint, full FRD), proceed directly to implementation.
+2. If a Design Spec or Design Addendum is present, read it fully before writing any code:
    - Apply the Visual Language tokens (colors, typography, spacing) consistently across all views.
    - Use the Navigation Transitions section to implement the correct presentation style (push, sheet, or tab) for each screen.
    - For each screen listed in the Stitch Project Reference, call `mcp_stitch_get_screen` to fetch the mockup and use it as the visual source of truth for layout, component placement, and UI states.
    - If a screen has variants listed, fetch those too and implement each distinct UI state they represent.
-2. Identify the smallest correct change.
-3. Implement code with minimal scope and clear iOS-native structure.
-4. Keep style and architecture consistent with the Architecture Blueprint and existing project patterns.
-5. Prefer predictable state management and safe persistence behavior.
-6. Return a brief implementation summary and any assumptions. Flag any discrepancy between a mockup and the FRD — the FRD takes precedence.
+3. Identify the smallest correct change.
+4. Implement code with minimal scope and clear iOS-native structure.
+5. Keep style and architecture consistent with the Architecture Blueprint and existing project patterns.
+6. Prefer predictable state management and safe persistence behavior.
+7. Return a brief implementation summary and any assumptions. Flag any discrepancy between a mockup and the FRD — the FRD takes precedence.
 
 Do not perform broad refactors unless explicitly requested.

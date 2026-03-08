@@ -31,7 +31,19 @@ Determine request type first, then follow the matching path:
 9. If the Designer returns Open Questions about missing or conflicting structure, send them back to the **Architect** to resolve. Repeat until the Designer returns no Open Questions.
 10. Run the **Developer** as a subagent with the full package: App Brief, Functional Requirements Document, Technical Specification, Architecture Blueprint, and Design Spec.
 
-**Implementation on existing code** (user has a codebase and requests a feature or fix):
+**New feature on existing code** (user has a codebase and requests a new feature, not just a fix):
+
+1. Run the **Functional Analyst** in additive mode: scope requirements strictly to the new feature. Pass it the feature description and any relevant existing context (existing data model, screens, conventions). It must not redesign existing functionality.
+2. If the Functional Analyst returns Open Questions, resolve them with the user before proceeding.
+3. Pass the feature's Functional Requirements Document and the existing Technical Specification to the **Technical Analyst** in additive mode: assess only what the new feature needs technically and how it fits the existing stack. It must not re-evaluate existing architectural decisions.
+4. If the Technical Analyst returns Open Questions about feasibility, send them back to the **Functional Analyst** to revise.
+5. Pass the Functional Requirements Document, the existing Architecture Blueprint, and the Technical Addendum to the **Architect** in additive mode: define only the structural additions or extensions needed (new screens, new ViewModels, new services). It must not restructure existing components.
+6. If the Architect returns Open Questions, send them back to the **Technical Analyst** to resolve.
+7. Pass the Functional Requirements Document, the existing Design Spec, and the Architecture Addendum to the **Designer** in additive mode: design only the new or modified screens. It must stay visually consistent with the existing app.
+8. If the Designer returns Open Questions about structure, send them back to the **Architect** to resolve.
+9. Run the **Developer** as a subagent with the full feature package: Functional Requirements Document, Technical Specification, Architecture additions, and Design Spec.
+
+**Bug fix or small change on existing code** (user has a codebase and requests a targeted fix or minor change):
 
 1. Translate the request into iOS-local requirements and remove any backend/auth assumptions.
 2. Run the **Developer** as a subagent with the task description and rely on its `ios-development` skill guidance.
