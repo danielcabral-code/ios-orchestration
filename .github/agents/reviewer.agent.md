@@ -1,7 +1,7 @@
 ---
 name: Reviewer
 description: Review code quality for Swift/iOS changes with prioritized findings.
-model: ["GPT-5.3-Codex (copilot)", "Claude Sonnet 4.6 (copilot)"]
+model: ["Claude Sonnet 4.6 (copilot)", "GPT-5.3-Codex (copilot)"]
 user-invocable: false
 tools: ["read", "search"]
 ---
