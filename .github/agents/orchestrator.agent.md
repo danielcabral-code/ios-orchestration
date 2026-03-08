@@ -41,16 +41,17 @@ Determine request type first, then follow the matching path:
 6. If the Architect returns Open Questions, send them back to the **Technical Analyst** to resolve.
 7. Pass the Functional Requirements Document, the existing Design Spec, and the Architecture Addendum to the **Designer** in additive mode: design only the new or modified screens. It must stay visually consistent with the existing app.
 8. If the Designer returns Open Questions about structure, send them back to the **Architect** to resolve.
-9. Run the **Developer** as a subagent with the full feature package: Functional Requirements Document, Technical Specification, Architecture additions, and Design Spec.
+9. Run the **Developer** as a subagent with the full feature package: the scoped Functional Requirements Document, the existing Technical Specification plus the Technical Addendum, the existing Architecture Blueprint plus the Architecture Addendum, and the existing Design Spec plus the Design Addendum. The Developer uses the existing full documents as context and the addenda as the delta describing what to build.
 
 **Bug fix or small change on existing code** (user has a codebase and requests a targeted fix or minor change):
 
 1. Translate the request into iOS-local requirements and remove any backend/auth assumptions.
-2. Run the **Developer** as a subagent with the task description and rely on its `ios-development` skill guidance.
+2. Run the **Developer** as a subagent with the task description. If an Architecture Blueprint is available, pass it as reference context. Rely on its `ios-development` skill guidance.
 
 **Review only** (user requests a review of existing code with no new implementation):
 
 1. Run the **Reviewer** directly on the current code and rely on its `code-review` skill guidance.
+2. Return the Reviewer's findings directly to the user. Do not proceed to the implementation loop.
 
 **All paths that include implementation continue here:**
 
