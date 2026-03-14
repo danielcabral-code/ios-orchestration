@@ -12,8 +12,8 @@ A multi-agent pipeline for building local-only iOS apps with Swift and SwiftUI, 
 | `Technical Analyst`  | Evaluates feasibility, selects frameworks, defines the data model. Produces a Technical Specification. |
 | `Architect`          | Designs the MVVM structure, navigation graph, and folder layout. Produces an Architecture Blueprint.   |
 | `Designer`           | Generates image assets (nano-banana) and screen mockups (Google Stitch). Produces a Design Spec.       |
-| `Developer`          | Implements Swift/SwiftUI code from the full document package.                                          |
-| `Reviewer`           | Reviews code quality with prioritized findings.                                                        |
+| `Developer`          | Implements Swift/SwiftUI code from the full document package. Runs a project readiness check before finishing — the resulting Xcode project must build and run on an iPhone simulator by pressing Play with no manual setup. |
+| `Reviewer`           | Reviews code quality with prioritized findings. Also verifies Xcode project readiness (any failure is a Critical finding). |
 
 All subagents are `user-invocable: false` — use them through the Orchestrator.
 
@@ -61,3 +61,15 @@ All apps in this workflow are:
 - iOS only, Swift, SwiftUI
 - Device-local: no backend, no auth, no remote APIs
 - Persistence via SwiftData, Core Data, UserDefaults, or FileManager
+
+## Generated assets
+
+The Designer saves all nano-banana image assets into the workspace under:
+
+```
+<AppName>/DesignAssets/<category>/<filename>.png
+```
+
+Categories: `AppIcon`, `Launch`, `EmptyStates`, `Onboarding`, `Content`, `3D`
+
+The Developer copies these into `Assets.xcassets` as named image sets before writing any view code. Images are referenced in Swift as `Image("name")` — never by filesystem path.

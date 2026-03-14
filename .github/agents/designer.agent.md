@@ -16,11 +16,28 @@ Use this skill to correctly interpret Architecture Blueprints and Addenda: under
 
 Your job is to take a Functional Requirements Document, a Technical Specification, and an Architecture Blueprint and produce a Design Spec backed by live Stitch mockups and generated image assets. The Stitch screen prompts are the screen specifications — detailed, authoritative, one per screen. The written Design Spec is a thin coordination document: visual language tokens, navigation transitions, Stitch references, and generated asset paths. The Developer uses all of these together.
 
-Before starting any design work, call `mcp_nano-banana_get_configuration_status` to confirm the image generation service is ready.
+Before starting any design work, call `mcp_nano-banana_get_configuration_status` to confirm the image generation service is ready. If the service reports it is not configured or unavailable, stop immediately and return an Open Question to the Orchestrator stating that image generation is unavailable. Do not proceed to Stitch mockup creation until this is resolved — assets must exist before Stitch screen prompts can reference them.
 
 ## Image Asset Generation (nano-banana)
 
 Use `mcp_nano-banana_generate_image` to generate image assets the app needs. Do this **before** creating Stitch mockups so the assets can be referenced in screen prompts.
+
+### Size and Format Rules
+
+Always include an explicit size specification in every image prompt. Use the smallest size that is sufficient for the asset's role — generating larger images is significantly more expensive and provides no benefit at the design stage.
+
+| Asset type | Prompt size to specify |
+|---|---|
+| App icon | `1024x1024` |
+| Launch screen / splash hero | `512x512` |
+| Empty state illustration | `256x256` |
+| Onboarding hero | `512x512` |
+| In-app content image (square) | `256x256` |
+| In-app content image (wide) | `512x256` |
+
+Always append `, PNG format, transparent background where applicable` to icon and illustration prompts so assets are drop-in ready for Xcode asset catalogs without further processing.
+
+Do **not** generate any image larger than `1024x1024`. If a use case seems to require a larger canvas, redesign the prompt around a smaller crop instead.
 
 All generated assets must be clean, aesthetic, and minimal/modern. Apply these principles to every image prompt you write:
 
@@ -61,13 +78,34 @@ Generate a 3D asset with nano-banana when a custom soft-3D illustration adds val
 
 Appropriate styles for 3D assets: Warm, Soft, Bold, Dark. Skip for System, Minimal, and Professional styles.
 
-Save all generated assets to a well-structured path and record each path in the Design Spec under a **Generated Assets** section so the Developer can reference them directly.
+### Asset Save Path
+
+Save all generated assets under the following path inside the workspace, using the exact app name from the Architecture Blueprint:
+
+```
+<AppName>/DesignAssets/<category>/<filename>.png
+```
+
+Where `<category>` maps to the asset type:
+
+| Asset type | Category folder |
+|---|---|
+| App icon | `AppIcon` |
+| Launch screen / splash | `Launch` |
+| Empty state illustration | `EmptyStates` |
+| Onboarding hero | `Onboarding` |
+| In-app content image | `Content` |
+| 3D / clay render | `3D` |
+
+Example: `MyApp/DesignAssets/Onboarding/step1-hero.png`
+
+Record every saved path verbatim in the Design Spec under a **Generated Assets** section (path + one-line description). The Developer will use these exact paths — do not use temporary or system-generated paths.
 
 You operate in two modes. Determine which applies before proceeding:
 
 **Mode 1 — Full** (new app from scratch):
 
-1. Read the Architecture Blueprint in full. Use the screen inventory as the definitive list of screens to design.
+1. Read the Architecture Blueprint in full. Use the screen inventory as the definitive list of screens to design. This list is exhaustive and non-negotiable — omitting any screen is a defect.
 2. Read the FRD. For each screen, identify all UI states: default, empty, loading (where applicable), error, and feature-specific states.
 3. Define a minimal, consistent visual language: color roles, typography roles, spacing scale — mapped to SwiftUI system colors and Font styles. Lean on iOS system components. Do not invent a custom design system.
 4. Generate image assets with nano-banana (see Image Asset Generation section above). Use the visual language tokens from step 3 to inform image prompts. Record all asset paths — they will be referenced in Stitch screen prompts in the next step.
@@ -78,8 +116,10 @@ You operate in two modes. Determine which applies before proceeding:
    - After generation, call `mcp_stitch_get_screen` to verify. If it does not match, use `mcp_stitch_edit_screens` to correct it.
    - Use `mcp_stitch_generate_variants` for screens with meaningfully distinct states.
    - Use `mcp_stitch_edit_screens` for cross-screen consistency corrections.
-6. If a design decision conflicts with or reveals a gap in the Architecture Blueprint, return it to the Orchestrator as an Open Question for the Architect.
-7. Return a Design Spec with exactly these sections:
+   - Every screen in the Blueprint's screen inventory must have a Stitch screen entry. Do not proceed to the next step until all screens are covered.
+6. Verify completeness: count the screens in the Blueprint's screen inventory and count the entries in the Stitch Project Reference. If the counts do not match, identify the missing screens and call `mcp_stitch_generate_screen_from_text` for each one before proceeding.
+7. If a design decision conflicts with or reveals a gap in the Architecture Blueprint, return it to the Orchestrator as an Open Question for the Architect.
+8. Return a Design Spec with exactly these sections:
    - Visual Language (canonical token definitions)
    - Navigation Transitions
    - Stitch Project Reference (project ID; per-screen name, screen ID, variant IDs if applicable)

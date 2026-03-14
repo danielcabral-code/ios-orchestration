@@ -57,6 +57,21 @@ Provide a consistent, high-signal code review process focused on code quality an
 - Validate local persistence operations for data integrity and error handling.
 - Confirm offline/local-only assumptions are not accidentally violated.
 
+### Xcode Project Readiness
+
+As part of every review, verify the project can be built and run in Xcode by pressing Play on an iPhone simulator with no manual setup. Any failure is a **Critical** finding.
+
+- `.xcodeproj` / `.xcworkspace` exists at the repo root and opens without errors.
+- App target has a valid reverse-DNS Bundle Identifier.
+- Deployment target is iOS 17.0 or later.
+- Default scheme run destination is set to an iPhone simulator (not "Any iOS Device" or blank).
+- No missing (red) file references in the project.
+- All `.swift` files are in the Compile Sources phase; all resources are in Copy Bundle Resources.
+- `Assets.xcassets` exists and AppIcon set is populated with at least a `1024x1024` image.
+- All image names referenced in code have a matching asset catalog entry or a file at the declared path.
+- No unresolved Swift Package dependencies.
+- Default scheme builds and runs the app target (not a test or framework target).
+
 ## Anti-Patterns to Flag
 
 - Hidden side effects across unrelated layers.

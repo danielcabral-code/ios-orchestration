@@ -38,7 +38,8 @@ Determine request type first, then follow the matching path:
 7. If the Architect returns Open Questions requiring technical clarification, send them back to the **Technical Analyst** to resolve. Repeat until the Architect returns no Open Questions.
 8. Pass the Functional Requirements Document, Technical Specification, and Architecture Blueprint to the **Designer** subagent.
 9. If the Designer returns Open Questions about missing or conflicting structure, send them back to the **Architect** to resolve. Repeat until the Designer returns no Open Questions.
-10. Run the **Developer** as a subagent with the full package: App Brief, Functional Requirements Document, Technical Specification, Architecture Blueprint, and Design Spec.
+10. Verify that the Design Spec's Stitch Project Reference contains one entry for every screen in the Architecture Blueprint's screen inventory. If any screens are missing, return the Design Spec to the **Designer** with the list of missing screens and do not proceed until all screens are covered.
+11. Run the **Developer** as a subagent with the full package: App Brief, Functional Requirements Document, Technical Specification, Architecture Blueprint, and Design Spec.
 
 **New feature on existing code** (user has a codebase and requests a new feature, not just a fix):
 
@@ -50,7 +51,8 @@ Determine request type first, then follow the matching path:
 6. If the Architect returns Open Questions, send them back to the **Technical Analyst** to resolve.
 7. Pass the Functional Requirements Document, the existing Design Spec, and the Architecture Addendum to the **Designer** in additive mode: design only the new or modified screens. It must stay visually consistent with the existing app.
 8. If the Designer returns Open Questions about structure, send them back to the **Architect** to resolve.
-9. Run the **Developer** as a subagent with the full feature package: the scoped Functional Requirements Document, the existing Technical Specification plus the Technical Addendum, the existing Architecture Blueprint plus the Architecture Addendum, and the existing Design Spec plus the Design Addendum. The Developer uses the existing full documents as context and the addenda as the delta describing what to build.
+9. Verify that the Design Addendum's Stitch Project Reference contains an entry for every new and modified screen listed in the Architecture Addendum. If any are missing, return the Design Addendum to the **Designer** with the list of missing screens and do not proceed until all are covered.
+10. Run the **Developer** as a subagent with the full feature package: the scoped Functional Requirements Document, the existing Technical Specification plus the Technical Addendum, the existing Architecture Blueprint plus the Architecture Addendum, and the existing Design Spec plus the Design Addendum. The Developer uses the existing full documents as context and the addenda as the delta describing what to build.
 
 **Bug fix or small change on existing code** (user has a codebase and requests a targeted fix or minor change):
 
@@ -64,8 +66,8 @@ Determine request type first, then follow the matching path:
 
 **All paths that include implementation continue here:**
 
-1. Run the **Reviewer** as a subagent on the latest implementation and rely on its `code-review` skill guidance.
-2. If the Reviewer reports any `Critical` or `Important` findings and implementation changes are in scope, send those findings back to the **Developer** for fixes.
+1. Run the **Reviewer** as a subagent on the latest implementation and rely on its `code-review` skill guidance. Pass the Design Spec or Design Addendum as context alongside the code so the Reviewer can verify image asset paths and Xcode readiness against it.
+2. If the Reviewer reports any `Critical` or `Important` findings and implementation changes are in scope, send those findings back to the **Developer** for fixes. Include the full original package (FRD, Architecture Blueprint, Design Spec, and any addenda) alongside the findings so the Developer has complete context for the fix.
 3. Repeat until there are no `Critical` or `Important` findings, or a maximum of 3 review/fix iterations is reached.
 4. Keep the best known working implementation when the iteration cap is reached. Prioritize preserving a stable, functional result over chasing a perfect review outcome.
 5. Do not run implementation and review in parallel.

@@ -26,7 +26,18 @@ When assigned a review task:
 2. Check readability, naming, and maintainability.
 3. Check safety of state and local persistence usage.
 4. Flag bugs, regressions, and unnecessary complexity.
-5. Return findings prioritized as:
+5. **Xcode project readiness** — verify the project can be built and run by pressing Play with no manual setup:
+   - `.xcodeproj` / `.xcworkspace` exists at the repo root and is openable.
+   - Primary app target has a valid Bundle Identifier.
+   - Deployment target is iOS 17 or later.
+   - At least one iPhone simulator is configured as the default run destination.
+   - All source files and asset folders are present in the correct target membership phases — no broken references.
+   - `Assets.xcassets` contains a populated AppIcon set.
+   - All image asset paths referenced in code exist on disk.
+   - No unresolved Swift Package dependencies.
+   - Default scheme builds and runs the app target.
+   - Report any failures here as **Critical** findings.
+6. Return findings prioritized as:
    - Critical
    - Important
    - Nice to have

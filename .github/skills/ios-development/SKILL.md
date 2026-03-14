@@ -103,9 +103,46 @@ Implementation rules:
 - Add focused UI tests for critical user flows when feasible.
 - Validate behavior for first launch, empty state, and app relaunch persistence.
 
+## Xcode Project Configuration
+
+Every deliverable must be runnable in Xcode by pressing Play with no manual setup. Verify and fix the following before considering the task done:
+
+### Project file
+- A single `.xcodeproj` or `.xcworkspace` must exist at the repo root.
+- The workspace/project must open without "missing file" or "group not found" errors.
+
+### App target
+- Bundle Identifier: use reverse-DNS format, e.g. `com.example.<AppName>`. Must be non-empty and unique.
+- Deployment Target: iOS 17.0 or later.
+- `INFOPLIST_FILE` or `GENERATE_INFOPLIST_FILE` must be correctly set so the app target builds.
+- Supported Destinations must include at least one iPhone form factor.
+
+### Run destination (simulator)
+- The default scheme's run destination must be set to an iPhone simulator (e.g. iPhone 16).
+- Do not leave the run destination as "Any iOS Device" or unspecified — it prevents one-click run.
+
+### Source and resource membership
+- Every `.swift` source file must be in the app target's Compile Sources phase.
+- Every asset folder, storyboard, `.xib`, and resource file must be in the Copy Bundle Resources phase.
+- No red (missing) file references in the Project Navigator.
+
+### Asset catalog
+- `Assets.xcassets` must exist and be included in the bundle.
+- The AppIcon image set must be populated. If a generated app icon exists at `<AppName>/DesignAssets/AppIcon/`, place the image in the correct AppIcon slot (`1024x1024` universal single-scale for Xcode 14+).
+- Any image referenced by name in code (e.g. `Image("hero")`) must have a matching named image set in `Assets.xcassets`. Generated design assets must be copied into the asset catalog before they can be referenced — iOS apps cannot access images by workspace filesystem paths at runtime.
+
+### Swift Package dependencies
+- All declared Swift Package dependencies must be resolved (no "missing package" warnings).
+- If no external packages are used, the Package Dependencies section must be empty.
+
+### Scheme
+- The default scheme must build and run the app target, not a test target or framework.
+- Build configuration for Run must be `Debug`.
+
 ## Definition of Done
 
 - Feature works on-device with no network dependency.
 - Data survives expected app lifecycle events when required.
 - Code is readable, maintainable, and aligned with project conventions.
 - Known trade-offs and assumptions are explicitly documented.
+- Project passes all Xcode Project Configuration checks above — pressing Play in Xcode on an iPhone simulator produces a running app.
