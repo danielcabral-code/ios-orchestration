@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Use when reviewing code quality, correctness, maintainability, and regression risk, especially in Swift/iOS projects."
+description: "Use when reviewing code quality, correctness, maintainability, and regression risk — including PR review, pull request review, code audit, or 'check my code' requests — especially in Swift/iOS projects. Analyzes code for bugs, identifies unsafe concurrency and threading issues, flags potential memory leaks and silent error swallowing, suggests refactoring opportunities, and verifies Xcode project readiness. Produces actionable findings grouped by severity (Critical, Important, Nice to have), each with a clear explanation and suggested fix direction."
 ---
 
 # Code Review Skill
@@ -9,46 +9,29 @@ description: "Use when reviewing code quality, correctness, maintainability, and
 
 Provide a consistent, high-signal code review process focused on code quality and correctness.
 
-## Review Scope
+## Review Workflow
 
-- Focus on implementation quality, not product roadmap.
-- Prioritize correctness, readability, maintainability, and regression risk.
-- Evaluate changes in the context of existing patterns.
+Follow this sequence for every review:
 
-## Review Priorities
-
-1. Correctness
-2. Reliability and edge-case behavior
-3. Readability and maintainability
-4. Simplicity and design consistency
-5. Test coverage and regression protection
+1. **Build verification** — Confirm the project compiles and the Xcode readiness checklist passes before analysing logic.
+2. **Diff analysis** — Read the full change set to understand scope, intent, and what was deliberately left out.
+3. **Checklist review** — Apply the core checklist and Swift/iOS-specific checks against the diff and surrounding context.
+4. **Write findings** — Group findings by severity, then present them in the output format below. Explicitly note if no significant issues were found.
 
 ## Core Checklist
 
-### Correctness
-
+### Correctness and Reliability
 - Does the code do what it claims under normal and edge conditions?
-- Are failure paths handled explicitly?
-- Are assumptions validated where needed?
+- Are failure paths handled explicitly and assumptions validated?
+- Are state transitions coherent, and are data mutations safe and recoverable?
+- Are risky operations guarded and validated?
+- Are key behaviors covered by tests, including edge and error scenarios where risk is high?
 
 ### Readability and Maintainability
-
 - Are names specific and intent-revealing?
 - Are functions/classes focused and appropriately sized?
 - Is logic duplicated unnecessarily?
 - Is control flow easy to follow?
-
-### Safety and Reliability
-
-- Are state transitions coherent and predictable?
-- Are data mutations safe and recoverable?
-- Are risky operations guarded and validated?
-
-### Tests
-
-- Are key behaviors covered by tests?
-- Do tests assert outcomes that would catch regressions?
-- Are edge and error scenarios represented where risk is high?
 
 ## Swift/iOS-Specific Checks
 
@@ -57,20 +40,58 @@ Provide a consistent, high-signal code review process focused on code quality an
 - Validate local persistence operations for data integrity and error handling.
 - Confirm offline/local-only assumptions are not accidentally violated.
 
+### Common Swift Issue Examples
+
+**Unsafe main-thread work:**
+
+```swift
+// ❌ Before: heavy fetch blocks the main thread
+@MainActor
+func loadData() {
+    let result = URLSession.shared.synchronousDataTask(url: url) // blocks UI
+    process(result)
+}
+
+// ✅ After: offload to a background task, publish result on main actor
+func loadData() async {
+    let result = await fetchDataInBackground()
+    await MainActor.run { process(result) }
+}
+```
+
+**Silent error swallowing:**
+
+```swift
+// ❌ Before: error silently discarded
+func save(_ item: Item) {
+    do { try store.write(item) } catch { }
+}
+
+// ✅ After: log and propagate or surface to the user
+func save(_ item: Item) throws {
+    do { try store.write(item) }
+    catch {
+        logger.error("Failed to save item \(item.id): \(error)")
+        throw error
+    }
+}
+```
+
 ### Xcode Project Readiness
 
 As part of every review, verify the project can be built and run in Xcode by pressing Play on an iPhone simulator with no manual setup. Any failure is a **Critical** finding.
 
-- `.xcodeproj` / `.xcworkspace` exists at the repo root and opens without errors.
-- App target has a valid reverse-DNS Bundle Identifier.
-- Deployment target is iOS 17.0 or later.
-- Default scheme run destination is set to an iPhone simulator (not "Any iOS Device" or blank).
-- No missing (red) file references in the project.
-- All `.swift` files are in the Compile Sources phase; all resources are in Copy Bundle Resources.
-- `Assets.xcassets` exists and AppIcon set is populated with at least a `1024x1024` image.
-- All image names referenced in code have a matching asset catalog entry or a file at the declared path.
-- No unresolved Swift Package dependencies.
-- Default scheme builds and runs the app target (not a test or framework target).
+| Area | Check |
+|---|---|
+| Project file | `.xcodeproj` / `.xcworkspace` exists at repo root and opens without errors |
+| Bundle ID | Valid reverse-DNS identifier in *Signing & Capabilities* |
+| Deployment target | iOS 17.0 or later (*General → Minimum Deployments*) |
+| Run destination | Default scheme targets an iPhone simulator, not "Any iOS Device" or blank |
+| File references | No missing (red) files in the project navigator |
+| Build phases | All `.swift` files in *Compile Sources*; all resources in *Copy Bundle Resources* |
+| Assets | `Assets.xcassets` exists; AppIcon populated with at least a `1024×1024` image; all image names referenced in code have matching asset entries |
+| Packages | No unresolved Swift Package dependencies |
+| Default scheme | Builds and runs the app target, not a test or framework target |
 
 ## Anti-Patterns to Flag
 
@@ -84,9 +105,9 @@ As part of every review, verify the project can be built and run in Xcode by pre
 
 Return findings grouped by severity:
 
-- Critical: likely bugs, crashes, data loss, or severe regressions.
-- Important: maintainability or reliability issues that should be addressed soon.
-- Nice to have: optional cleanups and polish.
+- **Critical**: likely bugs, crashes, data loss, or severe regressions.
+- **Important**: maintainability or reliability issues that should be addressed soon.
+- **Nice to have**: optional cleanups and polish.
 
 For each finding include:
 

@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: "Use when designing the structural blueprint of an iOS app: folder structure, MVVM layers, navigation graph, protocols, and component boundaries."
+description: "Designs iOS app architecture including folder structure, MVVM layers, navigation graph, protocols, and component boundaries. Use when planning or creating an iOS/Swift app structure, setting up an Xcode project, defining feature boundaries, designing a navigation graph, or producing an Architecture Blueprint from a Functional Requirements Document and Technical Specification."
 ---
 
 # Architecture Skill
@@ -13,15 +13,24 @@ Design a clear, minimal structural blueprint for an iOS app based on a Functiona
 
 Architecture describes _how the app is structured_, not what it does (FRD) or which frameworks to use (Technical Spec). It defines layers, boundaries, and contracts. Good iOS architecture is predictable, testable, and easy to navigate. Avoid over-engineering.
 
+## Workflow
+
+Follow this sequence to derive the architecture from input documents:
+
+1. **Read the FRD** — extract all user-facing features and data entities.
+2. **Identify features** — map each FRD requirement to a named feature; verify every requirement maps to exactly one feature before proceeding.
+3. **Map features to screens** — determine navigation method for each screen (push / sheet / tab).
+4. **Define component boundaries** — name the View and ViewModel per feature; specify state, actions, and persistence interactions.
+5. **Validate against the Technical Spec** — confirm framework choices, persistence strategy, and service dependencies are consistent with the spec. If inconsistencies are found, list them in the Open Questions section and flag for Technical Analyst review before proceeding.
+6. **Verify blueprint coverage** — confirm every FRD requirement is addressed by exactly one feature in the produced blueprint before delivering.
+
 ## Architectural Pattern: MVVM
 
-Default to MVVM for all SwiftUI apps:
+Default to MVVM for all SwiftUI apps. Project-specific conventions:
 
-- **Model**: data entities and persistence. Owns the data layer. Ideally pure Swift types with no UI dependencies.
-- **ViewModel**: owns state and business logic for a screen or feature. Mediates between Model and View. Exposes `@Published` properties. Has no UIKit/SwiftUI imports beyond `Foundation`/`Combine` where possible.
-- **View**: SwiftUI views. Reads from ViewModel. Sends user actions to ViewModel. Contains no business logic.
-
-Deviation from MVVM is acceptable only when explicitly justified (for example: a purely presentational screen with no state may not need a ViewModel).
+- **ViewModel**: exposes `@Published` properties; no UIKit/SwiftUI imports beyond `Foundation`/`Combine` where possible.
+- **View**: contains no business logic; sends user actions to ViewModel only.
+- Deviation is acceptable only when explicitly justified (e.g. a purely presentational screen with no state may not need a ViewModel).
 
 ## Folder Structure
 
@@ -73,9 +82,11 @@ Define protocols only where they add testability or decoupling value:
 - Device service wrappers (for example: a `LocationProvider` protocol wrapping CoreLocation).
 - Do not create protocols for ViewModels unless a concrete requirement for abstraction exists.
 
-## Architecture Blueprint Format
+---
 
-Produce an Architecture Blueprint with these sections:
+## Architecture Blueprint Format — Reference
+
+Use this section as the output template when producing an Architecture Blueprint. Populate each section from the workflow above.
 
 **1. Navigation Structure**
 
@@ -105,3 +116,4 @@ For each feature: View name, ViewModel name, ViewModel state properties, ViewMod
 **7. Open Questions** (if any)
 
 - Structural ambiguities requiring Technical Analyst or Functional Analyst clarification before the Developer can begin.
+- Technical Spec inconsistencies identified during validation (step 5).

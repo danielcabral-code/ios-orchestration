@@ -1,6 +1,6 @@
 ---
 name: ios-development
-description: "Use when building iOS apps in Swift with SwiftUI/UIKit, local persistence, device APIs, and no backend/auth dependencies."
+description: "Builds iOS user interfaces with SwiftUI or UIKit, implements local data persistence (SwiftData, Core Data, UserDefaults, FileManager), integrates device APIs (camera, location, sensors), configures Xcode projects, and establishes app lifecycle and concurrency patterns. Use when building iOS apps in Swift with no backend or authentication dependencies — including creating views and navigation, wiring up local storage, accessing on-device hardware features, or setting up a runnable Xcode project from scratch."
 ---
 
 # iOS Development Skill
@@ -28,22 +28,69 @@ Provide a consistent, production-minded workflow for building iOS apps that run 
   - UserDefaults for lightweight settings/preferences.
   - FileManager for document/blob-style local content.
 
+## Feature Workflow
+
+Follow these steps when implementing a new feature, validating at each checkpoint before proceeding:
+
+1. **Define the model** — create or update the data model (SwiftData `@Model`, Core Data entity, or plain Swift struct).
+2. **Verify build** — ensure the project compiles cleanly with no errors.
+3. **Add the view** — build the SwiftUI view using appropriate property wrappers; confirm preview renders.
+4. **Wire persistence** — connect the view to the data layer; test save/load round-trip manually.
+5. **Handle edge cases** — empty state, loading state, error state must all be reachable and visually handled.
+6. **Test** — unit test the view model/business logic; add regression tests for persistence edge cases.
+7. **Confirm Definition of Done** — run through the checklist at the bottom of this document before marking complete.
+
 ## Implementation Rules
 
 1. Start from the smallest correct change.
-2. Keep features modular and testable.
-3. Avoid premature abstraction.
-4. Keep state ownership explicit.
-5. Handle empty/loading/error states in UI flows.
-6. Ensure persistence operations are safe and predictable.
-7. Preserve existing style and structure unless asked to refactor.
+2. Keep state ownership explicit.
+3. Handle empty/loading/error states in UI flows.
+4. Ensure persistence operations are safe and predictable.
+5. Preserve existing style and structure unless asked to refactor.
 
 ## SwiftUI Guidance
 
 - Prefer single-responsibility views.
 - Keep view models focused and side-effect boundaries clear.
-- Use property wrappers correctly (`@State`, `@Binding`, `@StateObject`, `@ObservedObject`, `@Environment`, `@AppStorage`) based on ownership/lifecycle.
+- Use property wrappers correctly based on ownership and lifecycle (`@State`, `@Binding`, `@StateObject`, `@ObservedObject`, `@Environment`, `@AppStorage`).
 - Minimize view body complexity with extracted subviews and helper methods.
+
+**Example — SwiftUI view with correct property wrapper usage:**
+
+```swift
+// ViewModel owns state; view observes it
+@MainActor
+final class ItemListViewModel: ObservableObject {
+    @Published var items: [Item] = []
+    @Published var isLoading = false
+
+    func load(from store: ItemStore) async {
+        isLoading = true
+        defer { isLoading = false }
+        items = await store.fetchAll()
+    }
+}
+
+struct ItemListView: View {
+    @StateObject private var viewModel = ItemListViewModel()
+    @Environment(\.itemStore) private var store
+
+    var body: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.items.isEmpty {
+                ContentUnavailableView("No Items", systemImage: "tray")
+            } else {
+                List(viewModel.items) { item in
+                    ItemRow(item: item)
+                }
+            }
+        }
+        .task { await viewModel.load(from: store) }
+    }
+}
+```
 
 ## Concurrency Guidance
 
@@ -51,6 +98,20 @@ Provide a consistent, production-minded workflow for building iOS apps that run 
 - Keep UI mutations on the main actor when required.
 - Avoid detached tasks unless isolation is intentionally required.
 - Ensure cancellation paths are respected for long-running work.
+
+**Example — async persistence operation on the main actor:**
+
+```swift
+@MainActor
+func saveItem(_ item: Item) async {
+    do {
+        try await store.insert(item)
+    } catch {
+        // Surface error to UI; never silently swallow
+        self.errorMessage = error.localizedDescription
+    }
+}
+```
 
 ## Persistence Guidance
 
@@ -60,13 +121,50 @@ Provide a consistent, production-minded workflow for building iOS apps that run 
 - Keep migration impact in mind when changing stored schemas.
 - For local-only apps, treat stored data as source of truth.
 
-## Code Quality Baseline
+**Example — SwiftData model setup:**
 
-- Naming must be clear and domain-specific.
-- Functions should be concise and intent-revealing.
-- Avoid duplicated logic; extract shared helpers when justified.
-- Prefer explicit types at boundaries where readability improves.
-- Add brief comments only for non-obvious logic.
+```swift
+import SwiftData
+
+@Model
+final class Item {
+    var id: UUID
+    var title: String
+    var createdAt: Date
+
+    init(title: String) {
+        self.id = UUID()
+        self.title = title
+        self.createdAt = .now
+    }
+}
+
+// In the App entry point:
+@main
+struct MyApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+        .modelContainer(for: Item.self)
+    }
+}
+
+// In a view:
+struct ContentView: View {
+    @Query private var items: [Item]
+    @Environment(\.modelContext) private var context
+
+    var body: some View {
+        List(items) { item in Text(item.title) }
+        .toolbar {
+            Button("Add") {
+                context.insert(Item(title: "New"))
+            }
+        }
+    }
+}
+```
 
 ## UX and Platform Quality
 
@@ -84,15 +182,12 @@ Use SceneKit or RealityKit only when the Design Spec explicitly calls for an int
 | SceneKit   | Non-AR 3D scenes, rotatable objects, supported on all iOS targets | `SceneView(scene:options:)` |
 | RealityKit | AR scenes or when the Design Spec specifies RealityKit            | `RealityView` (iOS 17+)     |
 
-Implementation rules:
-
-- Load `.usdz` assets from the app bundle. Do not fetch remotely.
-- Use `SceneView.Options` `.allowsCameraControl` for user-rotatable objects; omit for static display.
-- For `SceneView`, load the scene with `SCNScene(named:)` and handle the nil case gracefully.
-- For `RealityView`, load entities with `ModelEntity.loadAsync(named:)` and catch load errors.
+- Load `.usdz` assets from the app bundle; do not fetch remotely.
+- Use `SCNScene(named:)` and handle the nil case; use `ModelEntity.loadAsync(named:)` and catch load errors.
+- Use `.allowsCameraControl` for user-rotatable objects; omit for static display.
 - Wrap 3D views in a sized container — they do not self-size reliably in SwiftUI layouts.
+- Load large `.usdz` files asynchronously and show a `ProgressView` while loading.
 - Test on device; SceneKit/RealityKit performance in Simulator is unreliable.
-- If the `.usdz` file is large, load asynchronously and show a `ProgressView` while loading.
 
 ---
 
@@ -105,39 +200,19 @@ Implementation rules:
 
 ## Xcode Project Configuration
 
-Every deliverable must be runnable in Xcode by pressing Play with no manual setup. Verify and fix the following before considering the task done:
+Every deliverable must be runnable in Xcode by pressing Play with no manual setup. Verify before considering the task done:
 
-### Project file
-- A single `.xcodeproj` or `.xcworkspace` must exist at the repo root.
-- The workspace/project must open without "missing file" or "group not found" errors.
-
-### App target
-- Bundle Identifier: use reverse-DNS format, e.g. `com.example.<AppName>`. Must be non-empty and unique.
-- Deployment Target: iOS 17.0 or later.
-- `INFOPLIST_FILE` or `GENERATE_INFOPLIST_FILE` must be correctly set so the app target builds.
-- Supported Destinations must include at least one iPhone form factor.
-
-### Run destination (simulator)
-- The default scheme's run destination must be set to an iPhone simulator (e.g. iPhone 16).
-- Do not leave the run destination as "Any iOS Device" or unspecified — it prevents one-click run.
-
-### Source and resource membership
-- Every `.swift` source file must be in the app target's Compile Sources phase.
-- Every asset folder, storyboard, `.xib`, and resource file must be in the Copy Bundle Resources phase.
-- No red (missing) file references in the Project Navigator.
-
-### Asset catalog
-- `Assets.xcassets` must exist and be included in the bundle.
-- The AppIcon image set must be populated. If a generated app icon exists at `<AppName>/DesignAssets/AppIcon/`, place the image in the correct AppIcon slot (`1024x1024` universal single-scale for Xcode 14+).
-- Any image referenced by name in code (e.g. `Image("hero")`) must have a matching named image set in `Assets.xcassets`. Generated design assets must be copied into the asset catalog before they can be referenced — iOS apps cannot access images by workspace filesystem paths at runtime.
-
-### Swift Package dependencies
-- All declared Swift Package dependencies must be resolved (no "missing package" warnings).
-- If no external packages are used, the Package Dependencies section must be empty.
-
-### Scheme
-- The default scheme must build and run the app target, not a test target or framework.
-- Build configuration for Run must be `Debug`.
+- **Project file:** Single `.xcodeproj` or `.xcworkspace` at repo root; opens without missing-file errors.
+- **Bundle Identifier:** Reverse-DNS format, e.g. `com.example.<AppName>`; non-empty and unique.
+- **Deployment Target:** iOS 17.0 or later.
+- **Info.plist:** `INFOPLIST_FILE` or `GENERATE_INFOPLIST_FILE` correctly set so the app target builds.
+- **Supported Destinations:** At least one iPhone form factor.
+- **Run destination:** Default scheme targets an iPhone simulator (e.g. iPhone 16) — not "Any iOS Device".
+- **Compile Sources:** Every `.swift` file in the app target's Compile Sources phase; no red references in the Project Navigator.
+- **Copy Bundle Resources:** Asset folders, storyboards, `.xib`, and resource files all included.
+- **Asset catalog:** `Assets.xcassets` exists and is bundled; AppIcon set populated with a `1024×1024` universal single-scale image (Xcode 14+). Any image referenced by name in code must have a matching named image set.
+- **Swift Package dependencies:** All declared packages resolved; section empty if no external packages are used.
+- **Scheme:** Default scheme builds and runs the app target (not a test target or framework); Run configuration is `Debug`.
 
 ## Definition of Done
 

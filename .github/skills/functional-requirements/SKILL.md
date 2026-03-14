@@ -1,28 +1,25 @@
 ---
 name: functional-requirements
-description: "Use when translating an iOS App Brief into detailed, developer-ready functional requirements."
+description: "Generates developer-ready functional requirements, acceptance criteria, and structured feature specifications from an iOS App Brief. Use when translating an iOS App Brief, app spec, PRD, product requirements, mobile requirements, or feature documentation into a precise, unambiguous Functional Requirements Document covering happy paths, edge cases, persistence boundaries, and UI states."
 ---
 
 # Functional Requirements Skill
 
 ## Purpose
 
-Transform an App Brief into a precise, unambiguous set of functional requirements that a developer can implement directly — no interpretation required. Requirements must be grounded in how iOS apps actually work: state management, navigation, persistence, and offline-first behavior.
+Transform an App Brief into a precise, unambiguous set of functional requirements that a developer can implement directly — no interpretation required.
 
-## Core Principle
+## iOS Constraints (Authoritative Reference)
 
-A functional requirement describes what the app must do and under what conditions — not how to build it. Each requirement must be testable, specific, and tied to a real user need from the App Brief.
+All requirements must conform to these constraints — verified in Step 5:
 
-## iOS Context Awareness
-
-Requirements must reflect how iOS apps behave on device:
-
-- State is owned by the app process; it does not persist across launches unless explicitly saved.
+- State does not persist across launches unless explicitly saved.
 - Navigation is stack- or tab-based; flows must respect standard iOS navigation patterns.
-- Persistence is local only; data survives app relaunch only if written to SwiftData, Core Data, UserDefaults, or the file system.
+- Persistence is local only (SwiftData, Core Data, UserDefaults, or the file system).
 - There is no network layer; all data is on-device.
-- The app lifecycle matters: requirements must account for foreground, background, and relaunch states where relevant.
-- UI must handle empty states, loading states, and error states for every data-dependent view.
+- Requirements must account for foreground, background, and relaunch states where relevant.
+- Every data-dependent view must handle empty, loading, and error states.
+- No dependencies on backend, auth, or remote services.
 
 ## Requirements Process
 
@@ -67,16 +64,11 @@ After per-feature requirements, list global requirements that apply across the w
 
 ### Step 4 — Flag Ambiguities
 
-If the App Brief is unclear on any point, list each ambiguity explicitly in an "Open Questions" section at the end. Do not silently assume — surface the question so the Orchestrator or user can resolve it before development begins.
+If the App Brief is unclear on any point, list each ambiguity explicitly in an "Open Questions" section. Do not silently assume — surface the question so the Orchestrator or user can resolve it before development begins.
 
 ### Step 5 — Validate Against iOS Constraints
 
-Before finalising, confirm every requirement:
-
-- Is achievable without a backend, auth, or remote API.
-- Maps to the data model defined in the App Brief.
-- Respects standard iOS app lifecycle and persistence behavior.
-- Does not introduce scope beyond what the App Brief defines.
+Before finalising, confirm every requirement conforms to the iOS Constraints defined above and does not introduce scope beyond what the App Brief defines.
 
 ## Output Format
 
@@ -100,11 +92,9 @@ Any ambiguities or gaps in the App Brief that must be resolved before developmen
 
 ## Quality Bar
 
-A good Functional Requirements Document produced by this skill should:
+A good Functional Requirements Document must:
 
-- Cover every feature from the App Brief with no omissions.
-- Have zero requirements that depend on backend, auth, or remote services.
+- Cover every App Brief feature with no omissions.
+- Conform to all iOS Constraints listed in the Authoritative Reference above.
 - Explicitly state persistence boundaries for all stored data.
-- Handle empty, loading, and error states for every data-dependent view.
-- Be directly usable by a developer as an implementation checklist.
-- Contain no ambiguous language ("should", "might", "could" — use "must" or "shall").
+- Use only "must" or "shall" — never "should", "might", or "could".

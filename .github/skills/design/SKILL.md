@@ -1,21 +1,15 @@
 ---
 name: design
-description: "Use when designing iOS app UI/UX with SwiftUI: style selection, color palettes, typography, spacing, accessibility, interaction patterns, and screen-level design decisions."
+description: "Guides iOS app UI/UX design with SwiftUI, covering style selection, color systems, typography, spacing, accessibility, interaction patterns, animation, and screen-level design decisions. Use when designing or planning iOS app screens, choosing color palettes or typography, establishing a mobile design system, defining SwiftUI interaction patterns, or making UI/UX decisions for an iOS or Swift project."
 ---
 
 # iOS Design Skill
-
-## Purpose
-
-Provide complete, self-contained design guidance for iOS apps built with SwiftUI. Covers style selection, color systems, typography, spacing, interaction patterns, accessibility, and screen-level design decisions. No external tools or scripts required — everything needed is in this file.
-
----
 
 ## Core iOS Design Principles
 
 - Follow Human Interface Guidelines (HIG) as the baseline. Deviate only with clear intent.
 - Prefer system components over custom ones. `List`, `Form`, `TabView`, `NavigationStack`, `Sheet`, `Alert`, `Toggle`, `Picker` — use them.
-- Use SF Symbols for all icons. They scale, adapt to Dynamic Type, and support multicolor and hierarchical rendering.
+- Use SF Symbols for all icons.
 - Design for all text sizes. Dynamic Type must never break layouts.
 - Design for both light and dark mode unless the app brief explicitly restricts to one.
 - Touch targets must be at least 44×44pt.
@@ -54,7 +48,7 @@ Define exactly five semantic color roles. Map each to a SwiftUI system color or 
 
 ### Palette Reference
 
-Pick the palette that matches your chosen style. All values are adaptable to light/dark automatically if you use system colors; hex values below are light mode — invert luminance for dark.
+Pick the palette that matches your chosen style. Hex values are light mode — invert luminance for dark. Use system colors where possible.
 
 **Minimal / Neutral**
 
@@ -98,8 +92,7 @@ Pick the palette that matches your chosen style. All values are adaptable to lig
 
 ### Dark Mode
 
-- Replace `background` with `.systemBackground` (resolves automatically).
-- Replace `surface` with `.secondarySystemBackground`.
+- Replace `background` with `.systemBackground` and `surface` with `.secondarySystemBackground`.
 - Ensure accent color meets 4.5:1 contrast on both backgrounds.
 - Never hardcode white or black — use semantic system colors.
 
@@ -107,7 +100,7 @@ Pick the palette that matches your chosen style. All values are adaptable to lig
 
 ## Step 3 — Typography
 
-SwiftUI uses Dynamic Type text styles. Always map your design roles to these — never use fixed font sizes.
+Always map design roles to Dynamic Type text styles — never use fixed font sizes.
 
 | Design Role | SwiftUI Text Style               | Typical Use                            |
 | ----------- | -------------------------------- | -------------------------------------- |
@@ -122,7 +115,7 @@ SwiftUI uses Dynamic Type text styles. Always map your design roles to these —
 
 ### Font Pairing (for expressive styles only)
 
-Use custom fonts only when the app's style calls for it. Default to SF Pro (system font) for utility apps.
+Default to SF Pro for utility apps. Use custom fonts only when the style calls for it.
 
 | Pairing                   | Style                         | SwiftUI Usage                                |
 | ------------------------- | ----------------------------- | -------------------------------------------- |
@@ -222,7 +215,7 @@ These are non-negotiable baseline requirements.
 | Sheet / modal presentation       | System default | —           | Let SwiftUI handle it                    |
 | Loading → content                | 300ms          | ease-in-out | `.transition(.opacity)`                  |
 
-Always use `transform` / `opacity` animations. Never animate layout properties (frame, size) directly.
+Always animate `transform` / `opacity`. Never animate layout properties (frame, size) directly.
 Respect `accessibilityReduceMotion` — disable or simplify non-essential animations.
 
 ---
@@ -233,10 +226,10 @@ Use 3D visual assets selectively to add tactile depth and a premium feel. Overus
 
 ### When to use 3D assets
 
-- App icon: a soft 3D render makes an icon feel premium and distinctive on the home screen. Appropriate for Warm, Soft, Bold, and Dark styles. Skip for System, Minimal, or Professional styles.
-- Hero / onboarding images: a single 3D-style illustration as a focal point per onboarding step. One asset per step maximum.
-- Empty state focal object: when the empty state calls for a visual object (not just an SF Symbol), a 3D-rendered version of that object adds character. One per screen maximum.
-- In-app feature highlights: if the FRD includes a feature showcase or paywall screen, a 3D object representing the feature is appropriate.
+- App icon: appropriate for Warm, Soft, Bold, and Dark styles. Skip for System, Minimal, or Professional.
+- Hero / onboarding images: one 3D-style illustration as a focal point per step. One asset per step maximum.
+- Empty state focal object: when an SF Symbol is insufficient, a 3D-rendered object adds character. One per screen maximum.
+- Feature highlights / paywall screens: a 3D object representing the feature is appropriate.
 
 ### When NOT to use 3D assets
 
@@ -257,7 +250,7 @@ Prefer native iOS options when they satisfy the need. Generate with nano-banana 
 
 ### Generating 3D-style assets with nano-banana
 
-Use a soft 3D / clay render prompt style. All aesthetic principles from Image Asset Generation apply (clean, minimal, limited palette) — add these 3D-specific descriptors:
+Use a soft 3D / clay render prompt style. All aesthetic principles from Image Asset Generation apply — add these 3D-specific descriptors:
 
 - `soft 3D render` or `clay render` — matte, tactile surface without specular glare
 - `isometric` or `front-facing` depending on composition

@@ -1,6 +1,6 @@
 ---
 name: technical-analysis
-description: "Use when evaluating iOS technical feasibility and selecting the right frameworks, persistence strategy, and platform constraints for a set of functional requirements."
+description: "Use when evaluating iOS or Swift mobile app technical feasibility, selecting the right frameworks and persistence strategy, or producing a technical specification for an iPhone or iPad app. Analyzes functional requirements against real iOS platform constraints, recommends SwiftUI vs UIKit, Core Data vs SwiftData vs UserDefaults, and identifies API compatibility issues and infeasible requirements before architecture or code is written. Generates a structured Technical Specification covering platform target, framework selection, data model, constraints, risk register, and open questions. Use when asked about iOS tech stack, Swift framework choices, mobile app architecture feasibility, or iPhone development constraints."
 ---
 
 # Technical Analysis Skill
@@ -53,6 +53,7 @@ For each functional requirement:
    - Requires user authentication.
    - Cannot be implemented with the chosen persistence strategy.
    - Has significant complexity or performance risk on device.
+4. **Validation checkpoint**: Before proceeding to the Technical Specification, confirm that every requirement from the FRD has been explicitly categorised as **feasible**, **infeasible**, or **needs clarification**. Do not proceed if any requirement is unassessed.
 
 If a requirement is infeasible, return it to the Functional Analyst with a clear explanation. Do not silently drop or modify requirements.
 
@@ -90,3 +91,32 @@ Produce a Technical Specification with these sections:
 **6. Open Questions** (if any)
 
 - Technical ambiguities that require clarification from the Functional Analyst before the Architect can proceed.
+
+## Example: Abbreviated Technical Specification
+
+> **Context**: A local-only habit-tracking app for iPhone with reminders and photo attachments.
+
+**1. Platform Target**
+- Minimum iOS: 17.0
+- Deployment: iPhone only
+
+**2. Framework Selection**
+- UI: SwiftUI — new project, no UIKit dependency.
+- Persistence: SwiftData — iOS 17+, model-driven, suits simple entity graph.
+- Additional: UNUserNotificationCenter (local reminders); PhotosUI/PhotosPicker (photo attachments); FileManager (attachment blob storage).
+
+**3. Data Model (excerpt)**
+- `Habit`: id (UUID), name (String), frequency (Enum), createdAt (Date)
+- `Entry`: id (UUID), date (Date), note (String?), photoPath (String?) — many-to-one → `Habit`
+- Attachments stored via FileManager; path referenced in `Entry.photoPath`.
+
+**4. Technical Constraints**
+- No remote APIs; all data on-device only.
+- Photo attachments: recommend cap at 10 MB per entry to avoid storage pressure.
+
+**5. Risk Register**
+- **SwiftData migration complexity** (Medium likelihood): schema changes in future versions require explicit migration plans. Mitigation: version schema from day one.
+- **Notification permission denial** (High likelihood): app must degrade gracefully if user denies. Mitigation: reminders feature is opt-in with clear permission rationale.
+
+**6. Open Questions**
+- Should habits support sub-tasks? If yes, a nested `SubTask` entity is required and may affect the data model significantly.

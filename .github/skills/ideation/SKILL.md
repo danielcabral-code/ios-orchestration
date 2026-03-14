@@ -1,6 +1,6 @@
 ---
 name: ideation
-description: "Use when turning a raw user prompt into a concrete, scoped iOS app concept ready for specification and implementation."
+description: "Transforms raw user prompts into concrete, scoped iOS app concepts by defining core features, identifying target users, outlining technical scope, and producing a structured App Brief ready for implementation. Use when brainstorming iPhone or iOS app ideas, planning a new mobile application, or turning a rough app concept into a buildable specification."
 ---
 
 # Ideation Skill
@@ -13,19 +13,17 @@ Transform a loose idea or one-line prompt into a focused, buildable iOS app conc
 
 One problem. One clear solution. The minimum feature set to solve it well.
 
-A good app idea is not the most complete or feature-rich answer to a problem. It is the simplest solution that fully solves the core problem without introducing unnecessary complexity.
-
 ## Ideation Process
 
 ### Step 1 — Extract the Core Problem
 
-Read the raw prompt and identify:
+Identify:
 
 - What problem or friction is the user experiencing?
-- Who is the user? (Be specific even if not stated — infer a realistic persona.)
+- Who is the user? (Be specific — infer a realistic persona if not stated.)
 - What does success look like for that user?
 
-Discard surface-level requests and focus on the underlying need. A prompt like "I want a habit tracker" is really "I want to build and maintain consistency in my daily routines."
+Focus on the underlying need, not the surface-level request.
 
 ### Step 2 — Define the App Concept
 
@@ -40,16 +38,15 @@ If multiple concepts are possible, choose the most focused one. Do not present m
 
 ### Step 3 — Define Core Features
 
-List only the features that are essential to the core experience. Apply the following test to each feature:
+List only features essential to the core experience. Apply this test to each:
 
-- Does removing this feature break the core experience? If yes, keep it.
-- Does this feature solve the core problem, or is it a nice-to-have? If nice-to-have, cut it.
-- Does this feature introduce significant complexity for marginal user value? If yes, cut it.
+| Test | Action |
+|------|--------|
+| Removing it breaks the core experience | Keep |
+| Nice-to-have rather than core | Cut |
+| High complexity for marginal value | Cut |
 
-Maximum 7 features. Fewer is better. Features must be user-facing and concrete, not technical implementation details.
-
-Good feature: "Log a habit completion for today with a single tap."
-Bad feature: "SwiftData persistence layer for habits."
+Maximum 7 features. Fewer is better. Features must be user-facing and concrete — not technical implementation details (e.g. "Log a habit with a single tap", not "SwiftData persistence layer").
 
 ### Step 4 — Define the Data Model
 
@@ -59,29 +56,29 @@ Identify:
 - The essential fields for each entity (name, date, value — no over-engineering).
 - Relationships between entities (for example: a Habit has many Entries).
 
-Keep the model minimal. Do not add fields speculatively. Only include what the defined features require.
+Only include what the defined features require. Do not add fields speculatively.
 
 ### Step 5 — Define User Flows
 
-Describe 2-4 main paths a user takes through the app. Each flow should be a short numbered sequence of steps. Cover:
+Describe 2–4 main paths a user takes through the app. Each flow is a short numbered step sequence. Cover:
 
 - The primary creation or input flow (for example: creating a new item).
 - The primary consumption or review flow (for example: viewing progress or history).
 - Any critical secondary flow if essential (for example: editing or deleting).
 
-Do not describe UI layout or component details. Describe what the user does and sees at a behavioral level.
+Describe what the user does and sees at a behavioral level — not UI layout or component details.
 
 ### Step 6 — Validate Constraints
 
-Before finalizing, confirm:
+Before finalizing, confirm every feature passes all of the following:
 
-- Every feature works fully offline and on-device.
-- No feature requires a user account, login, or identity system.
-- No feature calls any remote API or service.
-- The scope is achievable by a single developer in a focused session.
-- The data model maps cleanly to local persistence (SwiftData, Core Data, UserDefaults, or FileManager).
+- Works fully offline and on-device.
+- Requires no user account, login, or identity system.
+- Calls no remote API or service.
+- Is achievable by a single developer in a focused session.
+- Maps cleanly to local persistence (SwiftData, Core Data, UserDefaults, or FileManager).
 
-If any feature fails this check, either cut it or reformulate it to be local-only.
+If any feature fails this check, cut it or reformulate it to be local-only.
 
 ## Output Format
 
@@ -101,18 +98,17 @@ Brief description of each entity, its key fields, and relationships. Plain prose
 
 ### User Flows
 
-2-4 flows, each as a numbered step sequence. Label each flow clearly (for example: "Create a new habit", "Review weekly progress").
+2–4 flows, each as a numbered step sequence. Label each flow clearly (for example: "Create a new habit", "Review weekly progress").
 
 ### Constraints and Assumptions
 
-Short bullet list of any constraints applied (for example: iOS only, no backend, local storage) and any assumptions made about the user or context that shaped the concept.
+Short bullet list of constraints applied (for example: iOS only, no backend, local storage) and assumptions made about the user or context that shaped the concept.
 
 ## Quality Bar
 
 A good App Brief produced by this skill should:
 
 - Be immediately understandable by a developer with no further clarification needed.
-- Contain zero features that require backend, auth, or remote services.
 - Have a data model that maps directly to the features — nothing unused, nothing missing.
 - Leave no ambiguity about what the app does and does not do.
 - Be achievable as a real working app on an iOS device.
