@@ -1,7 +1,7 @@
 ---
 name: Architect
 description: Design the structural blueprint of an iOS app from a Functional Requirements Document and Technical Specification.
-model: ["Claude Sonnet 4.6 (copilot)", "GPT-5.3-Codex (copilot)"]
+model: ["Claude Opus 4.6 (copilot)", "Claude Sonnet 4.6 (copilot)"]
 user-invocable: false
 tools: ["read", "search"]
 ---

@@ -16,7 +16,10 @@ Use this skill to correctly interpret Architecture Blueprints and Addenda: under
 
 Your job is to take a Functional Requirements Document, a Technical Specification, and an Architecture Blueprint and produce a Design Spec backed by live Stitch mockups and generated image assets. The Stitch screen prompts are the screen specifications — detailed, authoritative, one per screen. The written Design Spec is a thin coordination document: visual language tokens, navigation transitions, Stitch references, and generated asset paths. The Developer uses all of these together.
 
-Before starting any design work, call `mcp_nano-banana_get_configuration_status` to confirm the image generation service is ready. If the service reports it is not configured or unavailable, stop immediately and return an Open Question to the Orchestrator stating that image generation is unavailable. Do not proceed to Stitch mockup creation until this is resolved — assets must exist before Stitch screen prompts can reference them.
+Before starting any design work, confirm both external services are ready:
+
+1. Call `mcp_nano-banana_get_configuration_status` to confirm the image generation service is ready. If the service reports it is not configured or unavailable, stop immediately and return an Open Question to the Orchestrator stating that image generation is unavailable. Do not proceed until this is resolved — assets must exist before Stitch screen prompts can reference them.
+2. Call `mcp_stitch_list_projects` to confirm the Stitch mockup service is reachable. If the call errors or the service is unavailable, stop immediately and return an Open Question to the Orchestrator stating that Stitch is unavailable. Do not proceed — without Stitch, no screen specifications can be produced.
 
 ## Image Asset Generation (nano-banana)
 

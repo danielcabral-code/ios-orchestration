@@ -29,6 +29,17 @@ Each agent is backed by one or more reference skills in `.github/skills/`:
 - `ios-development` — SwiftUI patterns, persistence, device APIs
 - `code-review` — Quality, correctness, maintainability
 
+## MCP servers
+
+Two MCP servers are required. Add them to your VS Code MCP configuration (`~/Library/Application Support/Code/User/mcp.json` on macOS, or `.vscode/mcp.json` for workspace-level):
+
+| Server | Purpose | Key required |
+|---|---|---|
+| `stitch` | Google Stitch — generates and manages iOS screen mockups | Google API key with Stitch access |
+| `nano-banana` | Image generation via Gemini — produces app icons, illustrations, and content images | Gemini API key |
+
+The Designer performs a live connectivity check on both servers before starting any design work. If either is unavailable it halts and surfaces the issue to the Orchestrator.
+
 ## How to use
 
 1. Open VS Code in this workspace.
