@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Guides iOS app UI/UX design with SwiftUI, covering style selection, color systems, typography, spacing, accessibility, interaction patterns, animation, and screen-level design decisions. Use when designing or planning iOS app screens, choosing color palettes or typography, establishing a mobile design system, defining SwiftUI interaction patterns, or making UI/UX decisions for an iOS or Swift project."
+description: "Guides iOS app UI/UX design with SwiftUI, covering style selection, color systems, typography, spacing, accessibility, interaction patterns, animation, asset generation strategy, and screen-level design decisions. Use when designing or planning iOS app screens, choosing color palettes or typography, establishing a mobile design system, defining SwiftUI interaction patterns, generating image assets with nano-banana, or making UI/UX decisions for an iOS or Swift project."
 ---
 
 # iOS Design Skill
@@ -9,10 +9,42 @@ description: "Guides iOS app UI/UX design with SwiftUI, covering style selection
 
 - Follow Human Interface Guidelines (HIG) as the baseline. Deviate only with clear intent.
 - Prefer system components over custom ones. `List`, `Form`, `TabView`, `NavigationStack`, `Sheet`, `Alert`, `Toggle`, `Picker` — use them.
-- Use SF Symbols for all icons.
+- Use SF Symbols for functional icons. Reserve generated image assets for aesthetic, hero, and brand moments.
 - Design for all text sizes. Dynamic Type must never break layouts.
 - Design for both light and dark mode unless the app brief explicitly restricts to one.
 - Touch targets must be at least 44×44pt.
+
+---
+
+## Asset-First Design Stance
+
+Apps that use custom-generated image assets feel more distinctive, premium, and memorable than apps that rely solely on SF Symbols. **Actively look for every opportunity to place a generated image asset in a screen** — don't ask whether an asset should exist, ask whether there is a good reason NOT to generate one.
+
+### Where to always generate an asset
+
+| Screen / Context | Asset to generate |
+|---|---|
+| App identity | App icon — always, for every app |
+| Onboarding / welcome | Hero illustration — one per step |
+| Any screen with an empty state | Empty state illustration (if not System/Minimal style) |
+| Launch / splash screen | Splash hero or wordmark |
+| Feature paywall or upgrade screen | Feature highlight illustration |
+| Home / dashboard hero area | Ambient hero image or branded header graphic |
+| Settings profile area | Default avatar or profile placeholder |
+
+### When SF Symbols are sufficient
+
+Use SF Symbols only for:
+- Functional, interactive icons (tab bar, toolbar, navigation)
+- Inline icons beside labels
+- Loading / status indicators
+- Destructive or utility actions
+
+If an area is visually prominent, content-rich, or brand-defining — generate an asset.
+
+### Asset philosophy
+
+All generated assets must make the app feel **quietly premium** — never stock-photo, never generic. Flat or softly rendered, with breathing room, using the app's own palette. One strong, well-placed asset beats five mediocre ones.
 
 ---
 
@@ -233,7 +265,66 @@ Respect `accessibilityReduceMotion` — disable or simplify non-essential animat
 
 ---
 
-## Step 9 — 3D Assets
+## Step 9 — nano-banana Asset Generation
+
+All image assets are generated with the `mcp_nano-banana_generate_image` tool. The prompt is the only parameter — size, quality, and style are all controlled through prompt wording.
+
+### Mandatory size presets
+
+These sizes are fixed. Never generate larger — doing so increases Gemini cost without meaningful quality gain at mobile display densities.
+
+| Asset type | Size in prompt | Notes |
+|---|---|---|
+| App icon | `1024x1024` | Required by App Store |
+| Onboarding hero | `512x512` | One per onboarding step |
+| Launch / splash hero | `512x512` | — |
+| Empty state illustration | `256x256` | Keep composition simple |
+| In-app content image (square) | `256x256` | — |
+| In-app content image (wide) | `512x256` | — |
+| 3D / clay render asset | `512x512` | Max size for 3D-style |
+
+Always append the size (`NxN`) and `, PNG format` to every prompt. Append `, transparent background` for icons and illustrations intended for compositing.
+
+### Quality baked into prompts
+
+There is no separate quality parameter. Instead, every asset prompt must include these descriptors to produce a clean, premium result on the first attempt:
+
+- `flat illustration style` or `soft 3D clay render` — never photorealistic
+- `generous negative space, minimal composition` — compositions that breathe
+- `[1-2 colors from the app's visual language] palette` — palette-matched
+- `no text, no badges, no borders` — unless a wordmark is explicitly required
+- `PNG format` + size from the table above
+
+Producing a clean result on the first attempt is the primary cost-control measure — every regeneration costs an additional Gemini call. **Write the prompt carefully and completely before generating.** If a result is poor, use `mcp_nano-banana_continue_editing` once to refine before starting over.
+
+### Asset save path convention
+
+```
+<ProjectRoot>/DesignAssets/<category>/<filename>.png
+```
+
+| Asset type | Category folder |
+|---|---|
+| App icon | `AppIcon` |
+| Launch / splash | `Launch` |
+| Empty state illustration | `EmptyStates` |
+| Onboarding hero | `Onboarding` |
+| In-app content image | `Content` |
+| 3D / clay render | `3D` |
+
+### Placeholder naming rule
+
+The filename (without extension) of a generated asset **must exactly match** the placeholder name used in the Stitch screen prompt. This 1:1 mapping ensures the Developer can connect every Stitch placeholder to the correct file without ambiguity.
+
+Example:
+- Asset saved as: `DesignAssets/Onboarding/welcome-hero.png`
+- Stitch placeholder text: `[ASSET PLACEHOLDER: welcome-hero]`
+
+Never use IDs (e.g., `A-01`) as the canonical identifier. The filename is the identifier.
+
+---
+
+## Step 10 — 3D Assets
 
 Use 3D visual assets selectively to add tactile depth and a premium feel. Overuse breaks visual consistency — apply only where it meaningfully enhances the experience.
 
@@ -284,7 +375,16 @@ Example prompt structure: _"Soft 3D clay render of [subject], [color from visual
 - [ ] Typography uses Dynamic Type styles — no fixed font sizes
 - [ ] Spacing is consistent with the defined scale
 - [ ] Corner radii are consistent across similar component types
-- [ ] All icons are SF Symbols — no emoji used as icons
+- [ ] All functional icons are SF Symbols — no emoji used as icons
+
+### Assets
+
+- [ ] App icon generated and saved to `DesignAssets/AppIcon/`
+- [ ] Every onboarding screen has a generated hero asset
+- [ ] Every generated asset filename matches its Stitch placeholder name exactly
+- [ ] No asset generated larger than the allowed preset size for its type
+- [ ] All assets saved to the correct `DesignAssets/<category>/` folder
+- [ ] Any failed assets have a documented SF Symbol fallback
 
 ### Interaction
 

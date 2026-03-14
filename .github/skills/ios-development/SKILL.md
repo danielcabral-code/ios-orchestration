@@ -200,19 +200,133 @@ Use SceneKit or RealityKit only when the Design Spec explicitly calls for an int
 
 ## Xcode Project Configuration
 
-Every deliverable must be runnable in Xcode by pressing Play with no manual setup. Verify before considering the task done:
+Every deliverable must be runnable in Xcode by pressing Play with no manual setup. **Always use xcodegen** to generate the `.xcodeproj` — do not hand-write Xcode project XML.
 
-- **Project file:** Single `.xcodeproj` or `.xcworkspace` at repo root; opens without missing-file errors.
-- **Bundle Identifier:** Reverse-DNS format, e.g. `com.example.<AppName>`; non-empty and unique.
-- **Deployment Target:** iOS 17.0 or later.
-- **Info.plist:** `INFOPLIST_FILE` or `GENERATE_INFOPLIST_FILE` correctly set so the app target builds.
-- **Supported Destinations:** At least one iPhone form factor.
-- **Run destination:** Default scheme targets an iPhone simulator (e.g. iPhone 16) — not "Any iOS Device".
-- **Compile Sources:** Every `.swift` file in the app target's Compile Sources phase; no red references in the Project Navigator.
-- **Copy Bundle Resources:** Asset folders, storyboards, `.xib`, and resource files all included.
-- **Asset catalog:** `Assets.xcassets` exists and is bundled; AppIcon set populated with a `1024×1024` universal single-scale image (Xcode 14+). Any image referenced by name in code must have a matching named image set.
-- **Swift Package dependencies:** All declared packages resolved; section empty if no external packages are used.
-- **Scheme:** Default scheme builds and runs the app target (not a test target or framework); Run configuration is `Debug`.
+### xcodegen Setup
+
+Create a `project.yml` file at the repo root. xcodegen reads this file and produces a correct `.xcodeproj` with all source files, resources, build settings, and scheme pre-configured.
+
+**Minimal `project.yml` template:**
+
+```yaml
+name: <AppName>
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+configs:
+  Debug: debug
+  Release: release
+targets:
+  <AppName>:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - <AppName>
+    resources:
+      - <AppName>/Assets.xcassets
+      - <AppName>/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.<AppName>
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        INFOPLIST_FILE: <AppName>/Info.plist
+        GENERATE_INFOPLIST_FILE: YES
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0.0
+    scheme:
+      testTargets: []
+schemes:
+  <AppName>:
+    build:
+      targets:
+        <AppName>: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+```
+
+Adjust `sources` and `resources` to match the actual folder structure from the Architecture Blueprint. If the app uses Swift packages, add a `packages:` section and reference them under `dependencies:` in the target.
+
+After writing `project.yml`, also create an `Info.plist` at `<AppName>/Info.plist` with at minimum:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundleDisplayName</key>
+    <string><AppName></string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+</dict>
+</plist>
+```
+
+Add any `NSUsageDescription` keys required by the app (camera, location, etc.) to this `Info.plist`.
+
+### Assets.xcassets Setup
+
+Create `<AppName>/Assets.xcassets/Contents.json`:
+```json
+{ "info": { "author": "xcode", "version": 1 } }
+```
+
+Create `<AppName>/Assets.xcassets/AppIcon.appiconset/Contents.json`:
+```json
+{
+  "images": [
+    {
+      "idiom": "universal",
+      "platform": "ios",
+      "size": "1024x1024",
+      "filename": "app-icon.png"
+    }
+  ],
+  "info": { "author": "xcode", "version": 1 }
+}
+```
+
+For each named image asset referenced in code, create `<AppName>/Assets.xcassets/<name>.imageset/Contents.json`:
+```json
+{
+  "images": [
+    { "idiom": "universal", "filename": "<name>.png" }
+  ],
+  "info": { "author": "xcode", "version": 1 }
+}
+```
+
+### Delivery Verification
+
+Before completing a task, verify the project is press-and-play:
+
+- `project.yml` exists at repo root and is syntactically valid
+- `<AppName>/Info.plist` exists; all required usage description keys are present
+- `Assets.xcassets` contains `AppIcon.appiconset` with a `1024×1024` PNG
+- Every image referenced by name in code has a matching `.imageset` with `Contents.json`
+- All source files are under the folder path declared in `project.yml` `sources`
+- All resource folders are listed under `resources`
+- If any Swift packages are used, they are declared in `project.yml` and auto-resolve on first open
+- The default scheme runs the app target in Debug
+- **Include these exact instructions in the implementation summary:** "Run `xcodegen generate` in the project root, then open `<AppName>.xcodeproj`, select an iPhone simulator, and press Play."
 
 ## Definition of Done
 
@@ -220,4 +334,5 @@ Every deliverable must be runnable in Xcode by pressing Play with no manual setu
 - Data survives expected app lifecycle events when required.
 - Code is readable, maintainable, and aligned with project conventions.
 - Known trade-offs and assumptions are explicitly documented.
-- Project passes all Xcode Project Configuration checks above — pressing Play in Xcode on an iPhone simulator produces a running app.
+- `project.yml` exists at the repo root; running `xcodegen generate` produces a clean `.xcodeproj` with no missing references.
+- User's only required actions are: run `xcodegen generate`, open `.xcodeproj`, select simulator, press Play.

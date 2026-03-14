@@ -22,22 +22,30 @@ Scope rules:
 
 When assigned a review task:
 
-1. Check correctness and edge cases.
-2. Check readability, naming, and maintainability.
-3. Check safety of state and local persistence usage.
-4. Flag bugs, regressions, and unnecessary complexity.
-5. **Xcode project readiness** — verify the project can be built and run by pressing Play with no manual setup:
-   - `.xcodeproj` / `.xcworkspace` exists at the repo root and is openable.
-   - Primary app target has a valid Bundle Identifier.
-   - Deployment target is iOS 17 or later.
-   - At least one iPhone simulator is configured as the default run destination.
-   - All source files and asset folders are present in the correct target membership phases — no broken references.
-   - `Assets.xcassets` contains a populated AppIcon set.
-   - All image asset paths referenced in code exist on disk.
-   - No unresolved Swift Package dependencies.
-   - Default scheme builds and runs the app target.
+1. The Orchestrator provides `<AppName>` and optionally a `<StoryFile>` path.
+   - If a `<StoryFile>` is provided (per-story review): read the story file from disk. Use its **Acceptance Criteria** and **Architecture Scope** sections to focus the review on the files changed in this story. Report findings on other files only if they are clearly broken by this story's changes.
+   - If no `<StoryFile>` is provided (final whole-app review): review the entire codebase for correctness, consistency, and Xcode readiness.
+   - In both cases, read the Design Spec from disk for asset and Xcode verification:
+     - **Full app:** `<AppName>/DesignSpec.md`
+     - **Feature:** `<AppName>/features/<FeatureName>/DesignSpec.md` — infer `<FeatureName>` from the story file path (e.g. `<AppName>/features/ActivityLog/stories/03-…md` → `<FeatureName>` = `ActivityLog`). If no story file is provided and the context is a feature, the Orchestrator will supply `<FeatureName>` explicitly.
+   - If the Design Spec file does not exist at the expected path, note it as a **Critical** finding (design assets cannot be verified) and continue the review without it.
+2. Check correctness and edge cases.
+3. Check readability, naming, and maintainability.
+4. Check safety of state and local persistence usage.
+5. Flag bugs, regressions, and unnecessary complexity.
+6. **Xcode project readiness** — verify the project can be built and run after `xcodegen generate` by pressing Play with no manual setup. The Developer uses xcodegen — do **not** flag the absence of `.xcodeproj` as an error; flag the absence of `project.yml` instead:
+   - `project.yml` exists at the repo root and is syntactically valid YAML.
+   - `project.yml` declares a valid `PRODUCT_BUNDLE_IDENTIFIER` (reverse-DNS format, e.g. `com.example.AppName`).
+   - `project.yml` deployment target is iOS 17.0 or later.
+   - `project.yml` `sources` and `resources` entries point to directories that exist in the workspace.
+   - `project.yml` default scheme runs the app target in Debug configuration (not a test target).
+   - `<AppName>/Info.plist` exists; all device API `NSUsageDescription` keys required by the code are present.
+   - `Assets.xcassets` exists and contains an `AppIcon.appiconset` with a `Contents.json` referencing a `1024×1024` PNG.
+   - Every `Image("name")` call in SwiftUI code has a matching `<name>.imageset/Contents.json` under `Assets.xcassets`.
+   - All image PNG files referenced in `Contents.json` entries exist on disk at the declared path.
+   - If Swift packages are used, they are declared in `project.yml` `packages` section.
    - Report any failures here as **Critical** findings.
-6. Return findings prioritized as:
+7. Return findings prioritized as:
    - Critical
    - Important
    - Nice to have
