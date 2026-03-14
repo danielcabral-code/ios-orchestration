@@ -104,15 +104,59 @@ Never generate any asset larger than these presets. Larger sizes increase Gemini
    - **Full mode** (new app): call `mcp_stitch_list_projects`. If no project exists for this app, call `mcp_stitch_create_project` with `deviceType: MOBILE`.
    - **Additive mode** (new feature): call `mcp_stitch_list_projects`, find the existing project, and use it. Do not create a new project.
 
-2. For every screen in the Blueprint's screen inventory, call `mcp_stitch_generate_screen_from_text` with `deviceType: MOBILE` and `modelId: GEMINI_2_0_FLASH`. Write a detailed prompt that includes:
-   - The exact screen name matching the Blueprint
-   - The complete layout: every component, its position, typography role, color role, spacing
-   - All interactive elements and their states
-   - Navigation context (tab, navigation bar presence, back button label)
-   - **Asset placeholders**: for every location in the Asset Inventory mapped to this screen, include: `[ASSET PLACEHOLDER: <filename-without-extension> — <one-line description>]`
-     - Example: `[ASSET PLACEHOLDER: welcome-hero — flat illustration of a sunrise over an open road, sky-blue and amber palette]`
-   - For SF Symbol icons: exact symbol name and rendering mode
-   - UI states to include (default, empty, loading, error)
+2. For every screen in the Blueprint's screen inventory, call `mcp_stitch_generate_screen_from_text` with `deviceType: MOBILE` and `modelId: GEMINI_2_0_FLASH`. Write a detailed prompt following the **Stitch Prompt Template** below.
+
+---
+
+#### Stitch Screen Prompt Template
+
+Use this structure for every screen prompt. Fill in every section — omitting sections produces under-specified screens that Stitch renders inconsistently.
+
+```
+Screen name: [ScreenName] — [one-line purpose]
+
+Device: iPhone, portrait, standard notch, home indicator visible at bottom.
+
+Navigation context: [e.g. "Navigation bar at top with title '[Title]' and a back button labeled '[Label]'. Tab bar at bottom with 4 tabs: Home (selected), Search, Saved, Profile." OR "Full-screen, no navigation bar, no tab bar."]
+
+Background: [color role, e.g. "#FFFFFF (appBackground)"]
+
+Layout (top to bottom):
+1. [Component name] — [type: e.g. large title, card, list row, CTA button] — [position/size hints] — [color role]
+2. ...
+
+Typography:
+- Titles: SF Pro Bold, .largeTitle / .title
+- Body: SF Pro Regular, .body
+- Secondary labels: SF Pro Regular, .subheadline, [secondary color role]
+
+Colors:
+- Primary actions: [accent hex]
+- Secondary labels: [secondary hex]
+- Background: [background hex]
+- Surface / cards: [surface hex]
+
+Asset placeholders (replace with generated images in Phase 4):
+- [ASSET PLACEHOLDER: filename-without-extension — brief description for placement context]
+
+SF Symbols used:
+- [symbol name] ([rendering mode]) — [where it appears]
+
+UI state shown: [Default / Empty / Loading / Error — specify which state this screen represents]
+
+Key interaction hints (for visual reference only):
+- [e.g. "Row swipe reveals a red Delete action on the right"]
+- [e.g. "FAB button bottom-right, accent color, '+' icon"]
+```
+
+**Stitch prompt anti-patterns — never do these:**
+- Do not write vague layout descriptions like "a list of items" — name every component explicitly.
+- Do not omit navigation context — Stitch will guess wrong.
+- Do not omit color values — use hex codes from the visual language, not color names.
+- Do not place real image content in the prompt — use `[ASSET PLACEHOLDER: ...]` only.
+- Do not describe interactions as animations — Stitch renders static; describe the static visual state.
+
+---
 
 3. After generating each screen, call `mcp_stitch_get_screen` to verify the output matches the prompt. If it does not match, call `mcp_stitch_edit_screens` to correct it before moving to the next screen. If `FLASH` fails after one correction, retry that screen once with `GEMINI_2_0_PRO`.
 

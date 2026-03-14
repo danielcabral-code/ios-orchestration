@@ -324,6 +324,53 @@ Never use IDs (e.g., `A-01`) as the canonical identifier. The filename is the id
 
 ---
 
+### Prompt Templates by Asset Type
+
+Use these as fill-in-the-blank starting points. Replace bracketed placeholders with app-specific values. Always append size and format from the mandatory preset table.
+
+**App Icon**
+> `Flat vector app icon of [subject or metaphor], [primary accent color] and [secondary color] palette, centered on [background color] background, bold simple silhouette, no text, no badge, minimal modern style, 1024x1024, PNG format`
+
+Tip: pick a single bold metaphor — a shape, object, or glyph. Avoid compositions with more than two elements.
+
+**Onboarding Hero**
+> `Flat illustration of [scene or concept representing the onboarding step], [color 1] and [color 2] palette, generous negative space, soft line weights, centered subject, no text, no borders, friendly and airy feel, 512x512, PNG format, transparent background`
+
+Tip: each step should have a distinct subject — avoid reusing the same visual metaphor across steps.
+
+**Launch / Splash Hero**
+> `Flat illustration of [app name metaphor or primary value proposition], [primary color] palette with [accent color] highlight, minimal composition, single centered element, no text, 512x512, PNG format, transparent background`
+
+**Empty State Illustration**
+> `Flat illustration of [object or scene that reflects the empty context — e.g. 'an empty inbox tray', 'a blank map with a pin'], [muted color from visual language] palette, light and airy, simple shapes, no text, generous whitespace, 256x256, PNG format, transparent background`
+
+Tip: the image should visually suggest the *absence* of content — open space, a single waiting object — not a busy scene.
+
+**In-App Content Image (square)**
+> `Flat illustration of [specific content topic], [palette], minimal composition, soft shadows, no text, no UI chrome, 256x256, PNG format`
+
+**In-App Content Image (wide)**
+> `Flat illustration of [specific content topic], [palette], wide panoramic composition with breathing room on both sides, no text, 512x256, PNG format`
+
+**3D / Clay Render (icon or hero)**
+> `Soft 3D clay render of [subject], [color] palette, matte finish, centered, subtle ambient occlusion shadow, floating on white background, no text, minimal modern style, 512x512, PNG format`
+
+---
+
+### Common Failure Modes — What to Avoid
+
+| Problem | Cause | Fix |
+|---|---|---|
+| Photorealistic output | Missing style keyword | Always include `flat illustration style` or `soft 3D clay render` |
+| Cluttered, busy composition | Missing space keyword | Add `generous negative space, minimal composition` |
+| Off-palette colors | No palette constraint | Explicitly name 1-2 colors; never just say "colorful" |
+| Text or labels appear in asset | Missing no-text keyword | Always include `no text, no badges, no decorative borders` |
+| Asset looks stock-photo generic | Subject too vague | Be specific: `a single minimalist hourglass` not `a time concept` |
+| Icon has harsh white border | Missing background instruction | Add `transparent background` or `floating on [color] background` |
+| 3D result looks plastic / shiny | Missing surface keyword | Add `matte finish` and `no specular highlights` |
+
+---
+
 ## Step 10 — 3D Assets
 
 Use 3D visual assets selectively to add tactile depth and a premium feel. Overuse breaks visual consistency — apply only where it meaningfully enhances the experience.
