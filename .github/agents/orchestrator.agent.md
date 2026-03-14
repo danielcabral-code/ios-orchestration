@@ -2,7 +2,7 @@
 name: Orchestrator
 description: Coordinate iOS app development and code review for local-only Swift apps.
 model: ["Claude Sonnet 4.6 (copilot)", "GPT-5.3-Codex (copilot)"]
-tools: [terminal, read, agent, search]
+tools: [execute, read, agent, search]
 agents:
   [
     "Ideator",
