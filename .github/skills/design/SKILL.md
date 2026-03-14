@@ -20,8 +20,11 @@ description: "Guides iOS app UI/UX design with SwiftUI, covering style selection
 
 Choose one primary style that fits the app's purpose. Apply it consistently across all screens.
 
+> **Default aesthetic direction:** Lean toward designs that feel *sleek, modern, and quietly premium*. Clean surfaces, bold typographic hierarchy, a single restrained accent color, and generous negative space. Apps should look memorable and considered — distinctive without ornamentation. When no strong brief pushes otherwise, bias toward **Sleek / Elevated**.
+
 | Style                      | Best For                               | SwiftUI Aesthetic                                           |
 | -------------------------- | -------------------------------------- | ----------------------------------------------------------- |
+| **Sleek / Elevated**       | Any app meant to feel premium, modern, and memorable | Near-black or white canvas, high-contrast type, single restrained accent, zero decorative chrome |
 | **System / HIG-native**    | Utility, productivity, data-heavy apps | Default iOS controls, no decoration                         |
 | **Minimal**                | Focus, writing, meditation, finance    | Generous whitespace, muted palette, light typography weight |
 | **Warm / Editorial**       | Journaling, recipes, lifestyle         | Serif accents, earthy palette, soft corners                 |
@@ -30,7 +33,7 @@ Choose one primary style that fits the app's purpose. Apply it consistently acro
 | **Soft / Friendly**        | Children, wellness, onboarding         | Rounded corners, pastel palette, playful type               |
 | **Professional / Neutral** | Business, finance, reference           | Cool grays, tight spacing, structured layout                |
 
-**Selection rule:** match the app's primary emotion. A task manager is productive (System or Minimal). A mood tracker is personal (Warm or Soft). A workout tracker is energetic (Bold).
+**Selection rule:** match the app's primary emotion. A task manager is productive (Sleek / Elevated or System). A mood tracker is personal (Warm or Soft). A workout tracker is energetic (Bold). When the brief doesn't suggest a strong emotional direction, default to **Sleek / Elevated**.
 
 ---
 
@@ -49,6 +52,16 @@ Define exactly five semantic color roles. Map each to a SwiftUI system color or 
 ### Palette Reference
 
 Pick the palette that matches your chosen style. Hex values are light mode — invert luminance for dark. Use system colors where possible.
+
+**Sleek / Elevated**
+
+- primary: `#0D0D0D` (near-black)
+- secondary: `#6B7280` (cool mid-gray)
+- accent: `#6366F1` (indigo) — substitute `#0EA5E9` (sky) or `#F59E0B` (amber) when indigo conflicts with the app's domain
+- background: `#FFFFFF` (light) / `#0A0A0A` (dark)
+- surface: `#F5F5F5` (light) / `#141414` (dark)
+
+Typography note: favor `.semibold` or `.bold` weight for headlines; `.regular` or `.light` for body. Strong typographic contrast is central to this style.
 
 **Minimal / Neutral**
 

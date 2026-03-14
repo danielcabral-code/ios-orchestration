@@ -42,13 +42,14 @@ Always append `, PNG format, transparent background where applicable` to icon an
 
 Do **not** generate any image larger than `1024x1024`. If a use case seems to require a larger canvas, redesign the prompt around a smaller crop instead.
 
-All generated assets must be clean, aesthetic, and minimal/modern. Apply these principles to every image prompt you write:
+All generated assets must be clean, sleek, and quietly premium — not ornate, not generic. Apply these principles to every image prompt you write:
 
-- Flat or softly illustrated style — no photorealism, no gradients, no visual noise.
-- Generous negative space — let the subject breathe.
-- Limited palette — use 1-3 colors drawn from the app's visual language.
+- Flat or softly illustrated style — no photorealism, no heavy gradients, no visual noise.
+- Generous negative space — compositions should breathe; avoid filling the frame. The empty space is part of the design.
+- Restrained palette — 1–2 colors drawn from the app's visual language. Less is more.
 - No text, badges, or decorative borders unless explicitly required.
-- Consistent visual weight across all assets in the same app — icons, illustrations, and hero images should feel like they belong to the same family.
+- Every asset should feel considered and memorable — a distinctive silhouette or composition, never generic clip-art aesthetics.
+- Consistent visual weight across all assets in the same app — icons, illustrations, and hero images must feel like they belong to the same design family.
 
 If a generated asset looks cluttered, overly detailed, or stylistically inconsistent, use `mcp_nano-banana_continue_editing` to simplify it before saving.
 
@@ -110,7 +111,7 @@ You operate in two modes. Determine which applies before proceeding:
 
 1. Read the Architecture Blueprint in full. Use the screen inventory as the definitive list of screens to design. This list is exhaustive and non-negotiable — omitting any screen is a defect.
 2. Read the FRD. For each screen, identify all UI states: default, empty, loading (where applicable), error, and feature-specific states.
-3. Define a minimal, consistent visual language: color roles, typography roles, spacing scale — mapped to SwiftUI system colors and Font styles. Lean on iOS system components. Do not invent a custom design system.
+3. Define a sleek, consistent visual language: color roles, typography roles, spacing scale — mapped to SwiftUI system colors and Font styles. Default to the **Sleek / Elevated** aesthetic from the Design Skill unless the FRD clearly calls for a different style. Lean on iOS system components. Do not invent a custom design system.
 4. Generate image assets with nano-banana (see Image Asset Generation section above). Use the visual language tokens from step 3 to inform image prompts. Record all asset paths — they will be referenced in Stitch screen prompts in the next step.
 5. Create Stitch mockups:
    - Use `mcp_stitch_list_projects` to check whether a Stitch project already exists for this app.
