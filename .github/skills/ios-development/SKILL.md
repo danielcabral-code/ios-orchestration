@@ -326,7 +326,7 @@ Before completing a task, verify the project is press-and-play:
 - All resource folders are listed under `resources`
 - If any Swift packages are used, they are declared in `project.yml` and auto-resolve on first open
 - The default scheme runs the app target in Debug
-- **Include these exact instructions in the implementation summary:** "Run `xcodegen generate` in the project root, then open `<AppName>.xcodeproj`, select an iPhone simulator, and press Play."
+- Do not instruct the user to run `xcodegen generate` — the Orchestrator runs it automatically as the final step.
 
 ## Definition of Done
 
@@ -335,4 +335,4 @@ Before completing a task, verify the project is press-and-play:
 - Code is readable, maintainable, and aligned with project conventions.
 - Known trade-offs and assumptions are explicitly documented.
 - `project.yml` exists at the repo root; running `xcodegen generate` produces a clean `.xcodeproj` with no missing references.
-- User's only required actions are: run `xcodegen generate`, open `.xcodeproj`, select simulator, press Play.
+- User's only required actions after the Orchestrator completes: open `<AppName>.xcodeproj`, select an iPhone simulator, and press Play.
